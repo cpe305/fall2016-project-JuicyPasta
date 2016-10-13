@@ -1,6 +1,8 @@
 package io.github.honeypot.connection;
 
+import io.github.honeypot.logger.EventLogger;
 import io.github.honeypot.service.Service;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,38 +17,52 @@ public class TCPConnection extends Connection {
     Socket socket;
     BufferedReader in;
     PrintWriter out;
+    boolean isAlive = true;
 
-    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out) {
+    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out, EventLogger logger) {
+        super(logger);
+
         this.socket = socket;
         this.in = in;
         this.out = out;
 
         super.service = service;
+
+        String preamble = service.getPreamble();
     }
 
     @Override
     public void write(String input) {
-        out.write(input);
+        if (!StringUtils.isEmpty(input)) {
+            out.println(input);
+        }
     }
 
     @Override
     public String read() throws IOException, TimeoutException{
-        String contents = "";
+        String line = in.readLine();
+        if (line == null) {
+            this.isAlive = false;
+        }
+        return line;
+    }
 
-        /*
-        String next = null;
-        do {
-            next = in.readLine();
-            contents += next;
-        } while(next != null);
+    @Override
+    public boolean isAlive() {
+        return isAlive;
+    }
 
-        return contents;
-        */
-        return in.readLine();
+    @Override
+    public void run() {
+        super.run();
     }
 
     @Override
     public void close() throws IOException {
+        System.out.println(logger);
+
+        this.socket.shutdownInput();
+        this.socket.shutdownOutput();
         this.in.close();
         this.out.close();
         this.socket.close();

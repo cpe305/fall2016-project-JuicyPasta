@@ -1,8 +1,8 @@
 package io.github.honeypot.listener;
 
 import io.github.honeypot.connection.TCPConnection;
-import io.github.honeypot.connection.UDPConnection;
 import io.github.honeypot.service.Service;
+import io.github.honeypot.service.ServiceFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by jackson on 10/6/16.
  */
+/*
 public class UDPListener implements Runnable {
     public static final int PACKET_SIZE = 65535;
     private static final int POOLSIZE = 100;
@@ -45,7 +46,7 @@ public class UDPListener implements Runnable {
         udpChannel.register(selector, ops, new ClientRecord());
     }
 
-    public void addService(int port, Service serv) throws IOException {
+    public void addService(int port, ServiceFactory serv) throws IOException {
         portMapping.put(port, serv);
         System.out.println("GETTING" + port + " " + portMapping.get(port));
         udpChannel.socket().bind(new InetSocketAddress(port));
@@ -95,3 +96,4 @@ public class UDPListener implements Runnable {
         public ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
     }
 }
+*/

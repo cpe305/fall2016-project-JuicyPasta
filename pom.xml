@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.honeypot</groupId>
@@ -8,7 +8,7 @@
     <name>honeypot</name>
     <url>http://maven.apache.org</url>
     <properties>
-      <tomcat.version>8.5.6</tomcat.version>
+        <tomcat.version>8.5.6</tomcat.version>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
@@ -38,63 +38,19 @@
             <version>3.4</version>
         </dependency>
 
-        <dependency>
-           <groupId>org.apache.tomcat.embed</groupId>
-           <artifactId>tomcat-embed-core</artifactId>
-           <version>${tomcat.version}</version>
-        </dependency>
 
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
-           <groupId>org.apache.tomcat.embed</groupId>
-           <artifactId>tomcat-embed-jasper</artifactId>
-           <version>${tomcat.version}</version>
-        </dependency>
-
-        <dependency>
-           <groupId>org.apache.tomcat</groupId>
-           <artifactId>tomcat-jasper</artifactId>
-           <version>${tomcat.version}</version>
-        </dependency>
-
-        <dependency>
-           <groupId>org.apache.tomcat</groupId>
-           <artifactId>tomcat-jasper-el</artifactId>
-           <version>${tomcat.version}</version>
-        </dependency>
-
-        <dependency>
-           <groupId>org.apache.tomcat</groupId>
-           <artifactId>tomcat-jsp-api</artifactId>
-           <version>${tomcat.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
-           <plugin>
-             <groupId>org.codehaus.mojo</groupId>
-             <artifactId>appassembler-maven-plugin</artifactId>
-             <version>1.1.1</version>
-             <configuration>
-                  <assembleDirectory>target</assembleDirectory>
-                  <programs>
-                     <program>
-                       <mainClass>launch.LauncherMain</mainClass>
-                       <name>webapp</name>
-                     </program>
-                  </programs>
-               </configuration>
-               <executions>
-               <execution>
-                   <phase>package</phase>
-                   <goals>
-                       <goal>assemble</goal>
-                    </goals>
-                  </execution>
-               </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -105,6 +61,17 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <ignorePackaging>true</ignorePackaging>
+                    <charset>UTF-8</charset>
+                    <port>9090</port>
+                    <path>/</path>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

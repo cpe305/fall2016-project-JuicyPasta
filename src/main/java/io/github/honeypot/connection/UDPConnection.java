@@ -13,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by jackson on 10/6/16.
  */
+/*
 public class UDPConnection extends Connection {
     public static final int PACKET_SIZE = 65535;
 
@@ -54,3 +55,4 @@ public class UDPConnection extends Connection {
         this.socket.close();
     }
 }
+*/

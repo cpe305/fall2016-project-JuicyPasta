@@ -1,7 +1,9 @@
 package io.github.honeypot.listener;
 
 import io.github.honeypot.connection.TCPConnection;
+import io.github.honeypot.logger.EventLogger;
 import io.github.honeypot.service.Service;
+import io.github.honeypot.service.ServiceFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +32,7 @@ public class TCPListener implements Runnable {
     ServerSocketChannel server;
     Selector selector = Selector.open();
 
-    Map<Integer, Service> portMapping;
+    Map<Integer, ServiceFactory> portMapping;
 
     public TCPListener() throws IOException {
         portMapping = new HashMap<>();
@@ -44,14 +46,19 @@ public class TCPListener implements Runnable {
         server.register(selector, ops, null);
     }
 
-    public void addService(int port, Service serv) throws IOException {
+    public void addService(int port, ServiceFactory serv) throws IOException {
         portMapping.put(port, serv);
-        System.out.println("GETTING" + port + " " + portMapping.get(port));
         server.socket().bind(new InetSocketAddress(port));
     }
 
     @Override
     public void run() {
+        System.out.println("TCPListener listening on...");
+        portMapping.forEach((port, fact) -> {
+            System.out.println("\t" + port + " " + fact.type);
+        });
+        System.out.println();
+
         try {
             while (selector.isOpen()) {
                 selector.select();
@@ -69,10 +76,12 @@ public class TCPListener implements Runnable {
                         int port = clientSocket.getPort();
                         int localPort = clientSocket.getLocalPort();
 
-                        System.out.println("[*] tcp connection from port: " + port + " to: " + localPort);
+                        System.out.println("[*] tcp incoming " + port + " -> " + localPort);
 
+                        EventLogger logger = new EventLogger(clientSocket.getInetAddress());
+                        Service mockService = portMapping.get(localPort).getInstance();
 
-                        threadPool.execute(new TCPConnection(portMapping.get(localPort), clientSocket, in, out));
+                        threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, logger));
                     }
                 }
 
