@@ -1,5 +1,9 @@
 package io.github.honeypot.logger;
 
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -10,41 +14,18 @@ import java.util.List;
  * Created by jackson on 10/10/16.
  */
 public class EventLogger {
-    public LocalDateTime startTime;
-    public LocalDateTime endTime;
+    private static PrintWriter fileWriter;
 
-    public InetAddress address;
-
-    private List<String> conversation;
-
-    public EventLogger(InetAddress incomingAddress) {
-        startTime = LocalDateTime.now();
-        this.address = incomingAddress;
-
-        this.conversation = new LinkedList<>();
+    static {
+        try {
+            fileWriter = new PrintWriter(new File("logs/logfile"));
+        } catch (Exception ignored) {}
+        PrintWriter fileWriter;
     }
 
-    public void addIncomingMessage(String in) {
-        String str = String.format("INCOMING [%s]: %s", LocalDateTime.now().toString(), in);
-        System.out.println(str);
-        conversation.add(str);
-    }
-    public void addOutgoingMessage(String out) {
-        String str = String.format("OUTGOING [%s]: %s", LocalDateTime.now().toString(), out);
-        System.out.println(str);
-        conversation.add(str);
-    }
+    public static synchronized void log(Log log) {
+        String obj = log.toString();
 
-    public void end() {
-        endTime = LocalDateTime.now();
-    }
-
-    public String toString() {
-        String toRet = "CONVERSATION WITH " + address.toString() + "\n";
-        for (String m : conversation) {
-            toRet += "\t" + m + "\n";
-        }
-        toRet += "\n";
-        return toRet;
+        fileWriter.println(obj);
     }
 }

@@ -1,7 +1,5 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.EventLogger;
-
 /**
  * Created by jackson on 10/10/16.
  */

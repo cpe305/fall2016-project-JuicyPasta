@@ -8,4 +8,13 @@ version="3.1">
        <listener-class>io.github.honeypot.App</listener-class>
     </listener>
 
+
+    <servlet>
+        <servlet-name>logviewer</servlet-name>
+        <servlet-class>io.github.honeypot.servlet.LogServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>logviewer</servlet-name>
+        <url-mapping>/logs/*</url-mapping>
+    </servlet-mapping>
 </web-app>

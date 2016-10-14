@@ -1,6 +1,7 @@
 package io.github.honeypot.connection;
 
 import io.github.honeypot.logger.EventLogger;
+import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,8 +20,8 @@ public class TCPConnection extends Connection {
     PrintWriter out;
     boolean isAlive = true;
 
-    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out, EventLogger logger) {
-        super(logger);
+    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out, Log log) {
+        super(log);
 
         this.socket = socket;
         this.in = in;
@@ -59,7 +60,7 @@ public class TCPConnection extends Connection {
 
     @Override
     public void close() throws IOException {
-        System.out.println(logger);
+        System.out.println(log);
 
         this.socket.shutdownInput();
         this.socket.shutdownOutput();

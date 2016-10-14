@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
  */
 public class SMTPService extends Service {
 
+    public SMTPService() {
+        super.serviceName = "SMTPService";
+    }
+
     public String hostname = ":org.honeypot.com:";
 
     @Override

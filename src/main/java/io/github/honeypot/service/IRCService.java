@@ -12,6 +12,10 @@ public class IRCService extends Service {
     public String channel;
     public String key;
 
+    public IRCService() {
+        super.serviceName = "IRCService";
+    }
+
     public String hostname = ":org.honeypot.com:";
     @Override
     public String getPreamble() {

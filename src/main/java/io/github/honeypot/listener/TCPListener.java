@@ -2,6 +2,7 @@ package io.github.honeypot.listener;
 
 import io.github.honeypot.connection.TCPConnection;
 import io.github.honeypot.logger.EventLogger;
+import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
 import io.github.honeypot.service.ServiceFactory;
 
@@ -29,10 +30,10 @@ public class TCPListener implements Runnable {
     private static final int POOLSIZE = 100;
     private ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
 
-    ServerSocketChannel server;
-    Selector selector = Selector.open();
+    private ServerSocketChannel server;
+    private Selector selector = Selector.open();
 
-    Map<Integer, ServiceFactory> portMapping;
+    private Map<Integer, ServiceFactory> portMapping;
 
     public TCPListener() throws IOException {
         portMapping = new HashMap<>();
@@ -54,9 +55,7 @@ public class TCPListener implements Runnable {
     @Override
     public void run() {
         System.out.println("TCPListener listening on...");
-        portMapping.forEach((port, fact) -> {
-            System.out.println("\t" + port + " " + fact.type);
-        });
+        portMapping.forEach((port, fact) -> System.out.println("\t" + port + " " + fact.type));
         System.out.println();
 
         try {
@@ -78,10 +77,10 @@ public class TCPListener implements Runnable {
 
                         System.out.println("[*] tcp incoming " + port + " -> " + localPort);
 
-                        EventLogger logger = new EventLogger(clientSocket.getInetAddress());
                         Service mockService = portMapping.get(localPort).getInstance();
+                        Log log = new Log(mockService.serviceName, clientSocket.getInetAddress());
 
-                        threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, logger));
+                        threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, log));
                     }
                 }
 

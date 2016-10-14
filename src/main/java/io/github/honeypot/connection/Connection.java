@@ -1,22 +1,24 @@
 package io.github.honeypot.connection;
 
 import io.github.honeypot.logger.EventLogger;
+import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
  * Created by jackson on 10/2/16.
  */
-public abstract class Connection implements Runnable {
+public abstract class Connection implements Runnable, Closeable {
     Service service;
-    EventLogger logger;
+    Log log;
     boolean hasTalked;
 
-    public Connection(EventLogger logger) {
-        this.logger = logger;
+    public Connection(Log log) {
+        this.log = log;
         this.hasTalked = false;
     }
 
@@ -33,7 +35,7 @@ public abstract class Connection implements Runnable {
 
                     String preamble = service.getPreamble();
                     if (!StringUtils.isEmpty(preamble)) {
-                        logger.addOutgoingMessage(preamble);
+                        log.addOutgoingMessage(preamble);
                         write(preamble);
                     }
                 }
@@ -42,11 +44,11 @@ public abstract class Connection implements Runnable {
 
                 if (!StringUtils.isEmpty(contents)) {
 
-                    logger.addIncomingMessage(contents);
+                    log.addIncomingMessage(contents);
                     String output = service.feed(contents);
 
                     if (!StringUtils.isEmpty(output)) {
-                        logger.addOutgoingMessage(output);
+                        log.addOutgoingMessage(output);
                     }
                     write(output);
                 }
