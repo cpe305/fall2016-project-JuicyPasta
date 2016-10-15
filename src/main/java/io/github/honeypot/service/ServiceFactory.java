@@ -1,7 +1,5 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.EventLogger;
-
 /**
  * Created by jackson on 10/10/16.
  */
@@ -16,6 +14,9 @@ public class ServiceFactory {
         switch (type) {
             case "IRCService":
                 return new IRCService();
+
+            case "SMTPService":
+                return new SMTPService();
         }
 
         return null;

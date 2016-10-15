@@ -13,26 +13,22 @@ import java.io.IOException;
  *
  */
 public class App implements ServletContextListener {
+    private TCPListener tcpListener;
+    private Thread tcpListenerThread;
+
+    public App() throws Exception {
+        //UDPListener udpListener = new UDPListener();
+        //udpListener.addService(4000, new ServiceFactory("IRCService"));
+        //Thread udpListenerThread = new Thread(udpListener);
+
+        tcpListener = new TCPListener();
+        tcpListener.addService(6667, new ServiceFactory("IRCService"));
+        tcpListenerThread = new Thread(tcpListener);
+    }
 
     @Override
     public final void contextInitialized(ServletContextEvent context) {
-        //UDPListener udpListener = new UDPListener();
-        //udpListener.addService(4000, new ServiceFactory("IRCService"));
-
-        //Thread udpListenerThread = new Thread(udpListener);
-        //udpListenerThread.start();
-
-        try {
-
-            TCPListener tcpListener = new TCPListener();
-            tcpListener.addService(6667, new ServiceFactory("IRCService"));
-
-            Thread tcpListenerThread = new Thread(tcpListener);
-            tcpListenerThread.start();
-
-        } catch (Exception e) {
-
-        }
+        tcpListenerThread.start();
     }
 
     @Override

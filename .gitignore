@@ -18,3 +18,5 @@ target/
 # tomcat
 tomcat.*
 apache-tomcat-*
+
+logs/
