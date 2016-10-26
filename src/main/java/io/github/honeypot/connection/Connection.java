@@ -13,53 +13,56 @@ import java.util.concurrent.TimeoutException;
  * Created by jackson on 10/2/16.
  */
 public abstract class Connection implements Runnable, Closeable {
-    Service service;
-    Log log;
-    boolean hasTalked;
+  Service service;
+  Log log;
+  boolean hasTalked;
 
-    public Connection(Log log) {
-        this.log = log;
-        this.hasTalked = false;
-    }
+  public Connection(Log log) {
+    this.log = log;
+    this.hasTalked = false;
+  }
 
-    public abstract String read() throws TimeoutException, IOException;
-    public abstract void write(String data) throws IOException;
-    public abstract void close() throws IOException;
-    public abstract boolean isAlive();
+  public abstract String read() throws TimeoutException, IOException;
 
-    public void run() {
-        try {
-            while(service.isAlive() && this.isAlive()) {
-                if (!hasTalked) {
-                    hasTalked = true;
+  public abstract void write(String data) throws IOException;
 
-                    String preamble = service.getPreamble();
-                    if (!StringUtils.isEmpty(preamble)) {
-                        log.addOutgoingMessage(preamble);
-                        write(preamble);
-                    }
-                }
+  public abstract void close() throws IOException;
 
-                String contents = read();
+  public abstract boolean isAlive();
 
-                if (!StringUtils.isEmpty(contents)) {
+  public void run() {
+    try {
+      while (service.isAlive() && this.isAlive()) {
+        if (!hasTalked) {
+          hasTalked = true;
 
-                    log.addIncomingMessage(contents);
-                    String output = service.feed(contents);
-
-                    if (!StringUtils.isEmpty(output)) {
-                        log.addOutgoingMessage(output);
-                    }
-                    write(output);
-                }
-            }
-
-            EventLogger.log(log);
-
-            close();
-        } catch (TimeoutException | IOException e) {
-            throw new RuntimeException(e);
+          String preamble = service.getPreamble();
+          if (!StringUtils.isEmpty(preamble)) {
+            log.addOutgoingMessage(preamble);
+            write(preamble);
+          }
         }
 
+        String contents = read();
+
+        if (!StringUtils.isEmpty(contents)) {
+
+          log.addIncomingMessage(contents);
+          String output = service.feed(contents);
+
+          if (!StringUtils.isEmpty(output)) {
+            log.addOutgoingMessage(output);
+          }
+          write(output);
+        }
+      }
+
+      EventLogger.log(log);
+
+      close();
+    } catch (TimeoutException | IOException e) {
+      throw new RuntimeException(e);
     }
+
+  }
 }
