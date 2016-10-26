@@ -17,6 +17,9 @@ public class ServiceFactory {
 
             case "SMTPService":
                 return new SMTPService();
+
+            case "SSHService":
+                return new SSHService();
         }
 
         return null;

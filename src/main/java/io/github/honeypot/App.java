@@ -23,6 +23,8 @@ public class App implements ServletContextListener {
 
         tcpListener = new TCPListener();
         tcpListener.addService(6667, new ServiceFactory("IRCService"));
+        tcpListener.addService(6668, new ServiceFactory("SMTPService"));
+        tcpListener.addService(6677, new ServiceFactory("SSHService"));
         tcpListenerThread = new Thread(tcpListener);
     }
 

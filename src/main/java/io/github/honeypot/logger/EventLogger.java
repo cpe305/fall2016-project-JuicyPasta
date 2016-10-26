@@ -18,7 +18,7 @@ public class EventLogger {
 
     static {
         try {
-            fileWriter = new PrintWriter(new File("logs/log"));
+            fileWriter = new PrintWriter(new File("logs/log.txt"));
         } catch (Exception ignored) {}
     }
 

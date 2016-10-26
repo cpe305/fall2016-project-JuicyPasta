@@ -31,8 +31,10 @@ public class LogServlet extends HttpServlet {
                 res.setHeader("Content-Length", String.valueOf(inFile.length()));
                 res.setHeader("Content-Disposition", "inline; filename=\"" + inFile.getName() + "\"");
 
+                res.setContentType("text/plain");
                 Files.copy(inFile.toPath(), out);
 
+                res.sendError(200);
             } else {
 
                 res.sendError(404);

@@ -30,27 +30,25 @@ public class TCPListener implements Runnable {
     private static final int POOLSIZE = 100;
     private ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
 
-    private ServerSocketChannel server;
     private Selector selector = Selector.open();
 
     private Map<Integer, ServiceFactory> portMapping;
 
     public TCPListener() throws IOException {
         portMapping = new HashMap<>();
-
-        server = ServerSocketChannel.open();
-        server.configureBlocking(false);
-
-        int ops = server.validOps();
-
-        //register the selector with the serverchannel
-        server.register(selector, ops, null);
     }
 
     public void addService(int port, ServiceFactory serv) throws IOException {
         portMapping.put(port, serv);
-        server.socket().bind(new InetSocketAddress(port));
+
+        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        serverChannel.configureBlocking(false);
+        serverChannel.socket().bind(new InetSocketAddress(port));
+        int ops = serverChannel.validOps();
+
+        serverChannel.register(selector, ops);
     }
+
 
     @Override
     public void run() {
@@ -61,12 +59,17 @@ public class TCPListener implements Runnable {
         try {
             while (selector.isOpen()) {
                 selector.select();
-                Set readyKeys = selector.selectedKeys();
-                Iterator iterator = readyKeys.iterator();
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+
                 while (iterator.hasNext()) {
-                    SelectionKey key = (SelectionKey) iterator.next();
+                    SelectionKey key = iterator.next();
                     if (key.isAcceptable()) {
-                        SocketChannel client = server.accept();
+
+                        SocketChannel client = ((ServerSocketChannel) key.channel()).accept();
+
+                        if (client == null)
+                            continue;
+
                         Socket clientSocket = client.socket();
 
                         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -76,7 +79,6 @@ public class TCPListener implements Runnable {
                         int localPort = clientSocket.getLocalPort();
 
                         System.out.println("[*] tcp incoming " + port + " -> " + localPort);
-
                         Service mockService = portMapping.get(localPort).getInstance();
                         Log log = new Log(mockService.serviceName, clientSocket.getInetAddress());
 

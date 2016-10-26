@@ -12,7 +12,7 @@
 .DS_Store
 
 # Maven
-log/
+logs/log.txt/
 target/
 
 # tomcat
