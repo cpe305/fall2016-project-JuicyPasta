@@ -14,19 +14,20 @@ import java.util.List;
  * Created by jackson on 10/10/16.
  */
 public class EventLogger {
-    private static PrintWriter fileWriter;
+  private static PrintWriter fileWriter;
 
-    static {
-        try {
-            fileWriter = new PrintWriter(new File("logs/log.txt"));
-        } catch (Exception ignored) {}
+  static {
+    try {
+      fileWriter = new PrintWriter(new File("logs/log.txt"));
+    } catch (Exception ignored) {
     }
+  }
 
-    public static synchronized void log(Log log) {
-        log.end();
-        String obj = log.toString();
+  public static synchronized void log(Log log) {
+    log.end();
+    String obj = log.toString();
 
-        fileWriter.println(obj);
-        fileWriter.flush();
-    }
+    fileWriter.println(obj);
+    fileWriter.flush();
+  }
 }

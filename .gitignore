@@ -20,3 +20,4 @@ tomcat.*
 apache-tomcat-*
 
 logs/
+/bin/
