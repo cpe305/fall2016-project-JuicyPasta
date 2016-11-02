@@ -21,3 +21,6 @@ apache-tomcat-*
 
 logs/
 /bin/
+
+hostkey.ser
+style.xml

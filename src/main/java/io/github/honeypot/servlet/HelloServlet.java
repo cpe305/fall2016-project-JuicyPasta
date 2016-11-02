@@ -13,12 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 public class HelloServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        ServletOutputStream out = resp.getOutputStream();
-        out.write("hello world!".getBytes());
-        out.flush();
-        out.close();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            ServletOutputStream out = resp.getOutputStream();
+            out.write("hello world!".getBytes());
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            System.err.println(e);
+        }
     }
 
 }

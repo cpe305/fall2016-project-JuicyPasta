@@ -1,31 +1,58 @@
 package io.github.honeypot;
 
-import io.github.honeypot.listener.TCPListener;
-import io.github.honeypot.service.ServiceFactory;
+import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.IOException;
+
+import io.github.honeypot.exception.HoneypotException;
+import io.github.honeypot.listener.TCPListener;
+import io.github.honeypot.service.IRCService;
+import io.github.honeypot.service.SMTPService;
+import io.github.honeypot.service.SSHService;
 
 /**
  * Hello world!
- *
  */
 public class App implements ServletContextListener {
     private TCPListener tcpListener;
     private Thread tcpListenerThread;
 
-    public App() throws Exception {
-        //UDPListener udpListener = new UDPListener();
-        //udpListener.addService(4000, new ServiceFactory("IRCService"));
-        //Thread udpListenerThread = new Thread(udpListener);
+    public App() throws HoneypotException {
 
-        tcpListener = new TCPListener();
-        tcpListener.addService(6667, new ServiceFactory("IRCService"));
-        tcpListener.addService(6668, new ServiceFactory("SMTPService"));
-        tcpListener.addService(6677, new ServiceFactory("SSHService"));
+        try {
+            tcpListener = new TCPListener();
+            tcpListener.addService(6667, IRCService::new);
+            tcpListener.addService(6668, SMTPService::new);
+            tcpListener.addService(6677, SSHService::new);
+        } catch (IOException e) {
+            throw new HoneypotException(e);
+        }
+
         tcpListenerThread = new Thread(tcpListener);
+
+        /*
+        SshServer sshd = SshServer.setUpDefaultServer();
+        sshd.setPort(6666);
+
+        AbstractGeneratorHostKeyProvider keyProvider = new SimpleGeneratorHostKeyProvider(new File("hostkey.ser"));
+        keyProvider.setAlgorithm("RSA");
+        sshd.setKeyPairProvider(keyProvider);
+
+        sshd.setShellFactory(InteractiveProcessShellFactory.INSTANCE);
+        sshd.setPasswordAuthenticator((username, password, session) -> {
+            System.out.println(username);
+            System.out.println(password);
+            System.out.println(session);
+            return true;
+        });
+        sshd.setTcpipForwardingFilter(AcceptAllForwardingFilter.INSTANCE);
+        sshd.setCommandFactory(new ScpCommandFactory.Builder().withDelegate(
+                command -> new ProcessShellFactory(GenericUtils.split(command, ' ')).create()
+        ).build());
+        sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
+        sshd.start();
+        */
     }
 
     @Override
