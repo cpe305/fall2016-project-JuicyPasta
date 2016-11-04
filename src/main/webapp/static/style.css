@@ -3,22 +3,46 @@ height: 80%;
 }
 
 .card {
-padding: 10px;
 height: 100%;
+border-radius: 0px;
+box-shadow: 5px 5px 0px #888888;
+
 }
 
 .map {
-
-}
-
-.info {
 }
 
 .buttons {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-around;
 padding: 10px;
 }
 
-.service-data {
+.info {
 border: 1px solid black;
-height: 80%
+position:relative;
+}
+
+.log {
+padding: 10px;
+margin: 10px;
+height: 90%;
+position: relative;
+overflow-y: scroll;
+border: 1px solid black;
+}
+
+.log-list {
+list-style: none;
+margin: 0px;
+padding: 0px;
+width: 100%;
+}
+
+.log-list > li {
+border: 1px solid black;
+border-radius: 5px;
+margin-bottom: 2px;
+padding: 2px;
 }

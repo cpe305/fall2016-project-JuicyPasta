@@ -82,7 +82,7 @@ public class TCPListener implements Runnable, AutoCloseable {
 
                         System.out.println("[*] tcp incoming " + port + " -> " + localPort);
                         Service mockService = portMapping.get(localPort).create();
-                        Log log = new Log(mockService.serviceName, clientSocket.getInetAddress());
+                        Log log = new Log(mockService.getLogType(), clientSocket.getInetAddress());
 
                         threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, log));
                     }

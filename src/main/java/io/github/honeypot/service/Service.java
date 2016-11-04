@@ -6,7 +6,6 @@ import io.github.honeypot.logger.ServiceLogType;
  * Created by jackson on 10/5/16.
  */
 public abstract class Service {
-    public ServiceLogType logType;
     public String serviceName;
 
     private boolean alive;
@@ -28,4 +27,6 @@ public abstract class Service {
     abstract public String getPreamble();
 
     abstract public String feed(String input);
+
+    abstract public ServiceLogType getLogType();
 }

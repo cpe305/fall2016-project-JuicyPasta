@@ -18,6 +18,7 @@ import java.util.TreeMap;
  * Created by jackson on 10/14/16.
  */
 public class Log {
+    ServiceLogType type;
     private String eventType;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -25,7 +26,8 @@ public class Log {
     private List<String> conversation;
     private Map<String, String> properties;
 
-    public Log(String eventType, InetAddress incomingAddress) {
+    public Log(ServiceLogType type, InetAddress incomingAddress) {
+        this.type = type;
         this.startTime = LocalDateTime.now();
         //this.address = incomingAddress;
         try {

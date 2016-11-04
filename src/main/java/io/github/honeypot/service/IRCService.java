@@ -6,6 +6,8 @@ import io.github.honeypot.logger.ServiceLogType;
  * Created by jackson on 10/10/16.
  */
 public class IRCService extends Service {
+    private ServiceLogType logType = ServiceLogType.IRC_EVENT;
+
     private String name;
     private String password;
     private String nick;
@@ -14,11 +16,14 @@ public class IRCService extends Service {
 
     public IRCService() {
         super.serviceName = "IRCService";
-        super.logType = ServiceLogType.IRC_EVENT;
     }
 
     private String hostname = ":org.honeypot.com:";
 
+    @Override
+    public ServiceLogType getLogType() {
+        return logType;
+    }
     @Override
     public String getPreamble() {
         String preamble = hostname + " NOTICE AUTH :*** Looking up your hostname...\n";

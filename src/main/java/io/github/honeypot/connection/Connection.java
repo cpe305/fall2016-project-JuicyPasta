@@ -57,7 +57,7 @@ public abstract class Connection implements Runnable, Closeable {
                 }
             }
 
-            EventDatabase.logEvent(service.logType, log);
+            EventDatabase.logEvent(log);
 
             close();
         } catch (IOException e) {

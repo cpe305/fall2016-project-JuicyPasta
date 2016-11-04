@@ -25,7 +25,9 @@ public class EventDatabase {
         });
     }
 
-    public static void logEvent(ServiceLogType type, Log log) {
+    public static void logEvent(Log log) {
+        ServiceLogType type = log.type;
+
         synchronized (type) {
             LinkedList<Log> logs = database.get(type);
             logs.add(log);

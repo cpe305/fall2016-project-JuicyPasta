@@ -28,6 +28,8 @@ import io.github.honeypot.logger.ServiceLogType;
  * Created by jackson on 11/2/16.
  */
 public class SSHListener implements AutoCloseable {
+    private ServiceLogType logType = ServiceLogType.SSH_EVENT;
+
     private boolean isClosed;
     private SshServer sshd;
 
@@ -55,14 +57,14 @@ public class SSHListener implements AutoCloseable {
     private boolean passwordAuthenticate(String username, String password, ServerSession session) {
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
-        Log passwordAttemptLog = new Log("SshPasswordAttempt", addr);
+        Log passwordAttemptLog = new Log(logType, addr);
 
         passwordAttemptLog.addProperty("username", username);
         passwordAttemptLog.addProperty("password", password);
 
         passwordAttemptLog.end();
 
-        EventDatabase.logEvent(ServiceLogType.SSH_EVENT, passwordAttemptLog);
+        EventDatabase.logEvent(passwordAttemptLog);
 
         return true;
     }
@@ -70,14 +72,14 @@ public class SSHListener implements AutoCloseable {
     private boolean publicKeyAuthenticate(String username, PublicKey key, ServerSession session) {
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
-        Log pubkeyAttemptLog = new Log("SshPubkeyAttemptLog", addr);
+        Log pubkeyAttemptLog = new Log(logType, addr);
 
         pubkeyAttemptLog.addProperty("username", username);
         pubkeyAttemptLog.addProperty("key", key.toString());
 
         pubkeyAttemptLog.end();
 
-        EventDatabase.logEvent(ServiceLogType.SSH_EVENT, pubkeyAttemptLog);
+        EventDatabase.logEvent(pubkeyAttemptLog);
 
         return true;
     }

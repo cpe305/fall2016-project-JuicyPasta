@@ -10,10 +10,10 @@ import io.github.honeypot.logger.ServiceLogType;
  * Created by jackson on 10/10/16.
  */
 public class SMTPService extends Service {
+    private ServiceLogType logType = ServiceLogType.SMTP_EVENT;
 
     public SMTPService() {
         super.serviceName = "SMTPService";
-        super.logType = ServiceLogType.SMTP_EVENT;
     }
 
     public String hostname = ":org.honeypot.com:";
@@ -24,6 +24,11 @@ public class SMTPService extends Service {
         String preamble = String.format("%d %s ESMTP server ready %s", 220, hostname, date);
 
         return preamble;
+    }
+
+    @Override
+    public ServiceLogType getLogType() {
+        return logType;
     }
 
     @Override
