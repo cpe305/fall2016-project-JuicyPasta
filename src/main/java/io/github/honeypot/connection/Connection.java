@@ -4,10 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import io.github.honeypot.exception.HoneypotRuntimeException;
-import io.github.honeypot.logger.EventLogger;
+import io.github.honeypot.logger.EventDatabase;
 import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
 
@@ -58,7 +57,7 @@ public abstract class Connection implements Runnable, Closeable {
                 }
             }
 
-            EventLogger.log(log);
+            EventDatabase.logEvent(service.logType, log);
 
             close();
         } catch (IOException e) {

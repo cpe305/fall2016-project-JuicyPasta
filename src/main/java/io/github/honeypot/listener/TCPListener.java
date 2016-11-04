@@ -1,6 +1,5 @@
 package io.github.honeypot.listener;
 
-import org.apache.sshd.common.Closeable;
 import org.apache.sshd.common.Factory;
 
 import java.io.BufferedReader;
@@ -32,6 +31,7 @@ public class TCPListener implements Runnable, AutoCloseable {
     private ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
 
     private Selector selector = Selector.open();
+    private ServerSocketChannel serverChannel;
 
     private Map<Integer, Factory<Service>> portMapping;
 
@@ -42,7 +42,7 @@ public class TCPListener implements Runnable, AutoCloseable {
     public void addService(int port, Factory<Service> serv) throws IOException {
         portMapping.put(port, serv);
 
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        serverChannel = ServerSocketChannel.open();
         serverChannel.configureBlocking(false);
         serverChannel.socket().bind(new InetSocketAddress(port));
         int ops = serverChannel.validOps();
@@ -53,14 +53,11 @@ public class TCPListener implements Runnable, AutoCloseable {
     @Override
     public void close() throws IOException {
         selector.close();
+        serverChannel.close();
     }
 
     @Override
     public void run() {
-        System.out.println("TCPListener listening on...");
-        portMapping.forEach((port, fact) -> System.out.println("\t" + port + " " + fact.toString()));
-        System.out.println();
-
         try {
             while (selector.isOpen()) {
                 selector.select();

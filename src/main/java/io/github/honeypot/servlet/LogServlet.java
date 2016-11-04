@@ -1,9 +1,15 @@
 package io.github.honeypot.servlet;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -12,42 +18,62 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.github.honeypot.logger.EventDatabase;
+import io.github.honeypot.logger.Log;
+import io.github.honeypot.logger.ServiceLogType;
+
 /**
  * Created by jackson on 10/15/16.
  */
 
-@WebServlet(name = "LogServlet", urlPatterns = {"/logs/*"})
+@WebServlet(name = "LogServlet", urlPatterns = {"/log/*"})
 public class LogServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String filename = null;
+        String logType = null;
         try {
-            filename = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
+            logType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
         } catch (Exception e) {
             System.err.println(e);
         }
 
-        try (ServletOutputStream out = res.getOutputStream()) {
-            File inFile = new File("logs/" + filename);
+        res.setContentType("application/json");
 
-            if (inFile.exists()) {
+        JSONArray responseObj;
 
-                res.setHeader("Content-Type", getServletContext().getMimeType(filename));
-                res.setHeader("Content-Length", String.valueOf(inFile.length()));
-                res.setHeader("Content-Disposition", "inline; filename=\"" + inFile.getName() + "\"");
+        switch(logType) {
+            case "all":
+                responseObj = listToJson(EventDatabase.getRecentEvents());
+                break;
 
-                res.setContentType("text/plain");
-                Files.copy(inFile.toPath(), out);
+            case "ssh":
+                responseObj = null;
+                break;
 
-                res.sendError(200);
-            } else {
+            case "irc":
+                responseObj = null;
+                break;
 
-                res.sendError(404);
+            case "smpt":
+                responseObj = null;
+                break;
 
-            }
-        } catch (Exception e) {
-            System.err.println(e);
+            default:
+                return;
+
         }
+
+        PrintWriter out = res.getWriter();
+        out.print(responseObj);
+        out.flush();
+    }
+
+    public JSONArray listToJson(LinkedList<Log> list) {
+        JSONArray toRet = new JSONArray();
+        for (Log l : list) {
+            toRet.put(l.toJson());
+        }
+        return toRet;
     }
 }

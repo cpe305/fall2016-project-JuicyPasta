@@ -1,0 +1,24 @@
+.container-fluid {
+height: 80%;
+}
+
+.card {
+padding: 10px;
+height: 100%;
+}
+
+.map {
+
+}
+
+.info {
+}
+
+.buttons {
+padding: 10px;
+}
+
+.service-data {
+border: 1px solid black;
+height: 80%
+}
