@@ -8,10 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -52,8 +49,12 @@ public class TCPListener implements Runnable, AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        selector.close();
+        threadPool.shutdown();
+        while(!threadPool.isShutdown()) {
+            System.out.println("NOT OFF");
+        }
         serverChannel.close();
+        selector.close();
     }
 
     @Override
@@ -89,7 +90,7 @@ public class TCPListener implements Runnable, AutoCloseable {
                 }
 
             }
-        } catch (IOException e) {
+        } catch (IOException|ClosedSelectorException e) {
             throw new HoneypotRuntimeException(e);
         }
     }

@@ -26,7 +26,6 @@ import io.github.honeypot.logger.ServiceLogType;
  * Created by jackson on 10/15/16.
  */
 
-@WebServlet(name = "LogServlet", urlPatterns = {"/log/*"})
 public class LogServlet extends HttpServlet {
 
     @Override

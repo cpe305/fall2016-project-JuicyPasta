@@ -29,11 +29,7 @@ public class Log {
     public Log(ServiceLogType type, InetAddress incomingAddress) {
         this.type = type;
         this.startTime = LocalDateTime.now();
-        //this.address = incomingAddress;
-        try {
-            this.address = InetAddress.getByName("216.58.195.228");
-        } catch (Exception ignored) {
-        }
+        this.address = incomingAddress;
 
         this.conversation = new LinkedList<>();
         this.eventType = eventType;

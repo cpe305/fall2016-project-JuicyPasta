@@ -1,6 +1,7 @@
 $(document).ready(function() {
     // grab graph points
-    $.get('/log/all', function(data) {
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/all' : '/log/all'
+    $.get(logpath, function(data) {
         markers = []
         for(var i = 0; i < data.length; i++) {
             event = data[i]

@@ -42,13 +42,12 @@ public class App implements ServletContextListener {
 
     @Override
     public final void contextDestroyed(ServletContextEvent context) {
-        /*
         try {
             tcpListener.close();
             sshListener.close();
         } catch (IOException e) {
             throw new HoneypotRuntimeException(e);
         }
-        */
+
     }
 }
