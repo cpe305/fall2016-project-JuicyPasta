@@ -38,29 +38,13 @@ public class LogServlet extends HttpServlet {
         }
 
         res.setContentType("application/json");
-
         JSONArray responseObj;
 
-        switch(logType) {
-            case "all":
-                responseObj = listToJson(EventDatabase.getRecentEvents());
-                break;
-
-            case "ssh":
-                responseObj = null;
-                break;
-
-            case "irc":
-                responseObj = null;
-                break;
-
-            case "smpt":
-                responseObj = null;
-                break;
-
-            default:
-                return;
-
+        if (logType.equals("ALL")) {
+            responseObj = listToJson(EventDatabase.getRecentEvents());
+        } else {
+            ServiceLogType requestedType = ServiceLogType.valueOf(logType);
+            responseObj = listToJson(EventDatabase.getServiceEvents(requestedType));
         }
 
         PrintWriter out = res.getWriter();

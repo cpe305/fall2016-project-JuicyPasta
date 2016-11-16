@@ -19,7 +19,7 @@ import java.util.TreeMap;
  */
 public class Log {
     ServiceLogType type;
-    private String eventType;
+    private String desc;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private InetAddress address;
@@ -32,11 +32,14 @@ public class Log {
         this.address = incomingAddress;
 
         this.conversation = new LinkedList<>();
-        this.eventType = eventType;
 
         this.properties = new TreeMap<>();
 
         addLocation();
+    }
+
+    public void setDescription(String desc) {
+        this.desc = desc;
     }
 
     public void addProperty(String key, String value) {
@@ -79,7 +82,7 @@ public class Log {
     @Override
     public String toString() {
         StringBuilder toRet = new StringBuilder();
-        toRet.append("event type: " + eventType + "\n");
+        toRet.append("event description: " + desc + "\n");
         toRet.append("start time: " + startTime + "\n");
         toRet.append("end time: " + endTime + "\n");
         toRet.append("address  " + address.getHostAddress() + "\n");
@@ -87,30 +90,11 @@ public class Log {
         properties.forEach((key, value) -> toRet.append(key + ": " + value + "\n"));
 
         return toRet.toString();
-
-
-        /*
-        StringBuilder toRet = new StringBuilder(eventType + "::" + address.toString() + "\n");
-        for (String m : conversation) {
-            StringBuilder toAppend = new StringBuilder();
-            for (int i = 0; i < m.length(); i++) {
-                toAppend.append(Character.toString(m.charAt(i)));
-                if (m.charAt(i) == '\n') {
-                    toAppend.append("\t\t\t\t\t");
-                }
-            }
-            toRet.append('\t');
-            toRet.append(toAppend);
-            toRet.append('\n');
-        }
-        toRet.append('\n');
-        */
-
     }
 
     public JSONObject toJson() {
         JSONObject toRet = new JSONObject();
-        toRet.put("event type", eventType);
+        toRet.put("event description", desc);
         toRet.put("start time", startTime);
         toRet.put("end time", endTime);
         toRet.put("address", address.getHostAddress());

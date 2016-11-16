@@ -1,3 +1,5 @@
+<%@ page import="io.github.honeypot.logger.ServiceLogType" %>
+
 <html>
 <head>
     <title>honeypot</title>
@@ -27,7 +29,7 @@
 <body>
 <div class="container-fluid">
 
-    <h1>🍯Honeypot</h1>
+    <h1>Honeypot</h1>
 
     <div class="row">
         <div class="col-sm-8">
@@ -37,21 +39,19 @@
             <div class="card info">
                 <div class="buttons">
                     <button class="btn btn-primary">ALL</button>
-                    <button class="btn btn-primary">SSH</button>
-                    <button class="btn btn-primary">SMTP</button>
-                    <button class="btn btn-primary">IRC</button>
+                    <%for (ServiceLogType type : ServiceLogType.values()) { %>
+                        <button class="btn btn-primary"><%= type %></button>
+                    <%}%>
                 </div>
-                <div class="metadata">
 
-
+                <div class="metadata-area">
+                    <h4>metadata</h4>
+                    <div class="metadata well">
+                    </div>
                 </div>
-                <div class="log">
+
+                <div class="log-area">
                     <ul class="log-list">
-                        <li>asdf</li>
-                        <li>asdf</li>
-                        <li>asdf</li>
-                        <li>asdf</li>
-                        <li>asdf</li>
                     </ul>
                 </div>
 

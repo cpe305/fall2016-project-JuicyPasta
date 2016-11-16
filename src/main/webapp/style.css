@@ -1,12 +1,14 @@
+body{
+background-color:
+}
+
 .container-fluid {
 height: 80%;
 }
 
 .card {
 height: 100%;
-border-radius: 0px;
-box-shadow: 5px 5px 0px #888888;
-
+border-radius: 3px;
 }
 
 .map {
@@ -17,20 +19,39 @@ display: flex;
 flex-wrap: wrap;
 justify-content: space-around;
 padding: 10px;
+margin:5px;
 }
 
 .info {
 border: 1px solid black;
+border-radius: 3px;
 position:relative;
 }
 
-.log {
+.metadata-area {
+padding: 10px;
+padding-top:0px;
+margin: 10px;
+position: relative;
+border: 1px solid black;
+border-radius: 3px;
+}
+
+.metadata-area h4 {
+text-align:center;
+}
+
+.metadata {
+margin-bottom: 0px;
+}
+
+.log-area {
 padding: 10px;
 margin: 10px;
-height: 90%;
 position: relative;
 overflow-y: scroll;
 border: 1px solid black;
+border-radius: 3px;
 }
 
 .log-list {

@@ -9,6 +9,8 @@ import io.github.honeypot.exception.HoneypotException;
 import io.github.honeypot.exception.HoneypotRuntimeException;
 import io.github.honeypot.listener.SSHListener;
 import io.github.honeypot.listener.TCPListener;
+import io.github.honeypot.logger.EventDatabase;
+import io.github.honeypot.service.HTTPService;
 import io.github.honeypot.service.IRCService;
 import io.github.honeypot.service.SMTPService;
 
@@ -19,10 +21,13 @@ public class App implements ServletContextListener {
 
     public App() throws HoneypotException {
         try {
+
             tcpListener = new TCPListener();
             tcpListener.addService(6667, IRCService::new);
             tcpListener.addService(6668, SMTPService::new);
+            tcpListener.addService(80, HTTPService::new);
             tcpListenerThread = new Thread(tcpListener);
+            System.out.println("HI");
 
             sshListener = new SSHListener(6666);
         } catch (IOException e) {
@@ -43,8 +48,8 @@ public class App implements ServletContextListener {
     @Override
     public final void contextDestroyed(ServletContextEvent context) {
         try {
-            tcpListener.close();
             sshListener.close();
+            tcpListener.close();
         } catch (IOException e) {
             throw new HoneypotRuntimeException(e);
         }

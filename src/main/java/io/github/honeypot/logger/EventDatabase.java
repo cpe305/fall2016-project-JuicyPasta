@@ -19,10 +19,6 @@ public class EventDatabase {
         for(ServiceLogType k : ServiceLogType.values()) {
             database.put(k, new LinkedList<>());
         }
-
-        database.forEach((key, value) -> {
-            System.out.println(key + " : " + value.size());
-        });
     }
 
     public static void logEvent(Log log) {
@@ -37,9 +33,6 @@ public class EventDatabase {
         }
         synchronized (recentEvents) {
             recentEvents.add(log);
-            System.out.println("ADDING: ");
-            System.out.println(log.toString());
-            System.out.println();
             while (recentEvents.size() > LOG_LENGTH) {
                 recentEvents.removeLast();
             }

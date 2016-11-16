@@ -12,7 +12,38 @@ $(document).ready(function() {
         }
         createMap(markers)
     })
+
+    setMetadata({
+    'a': 1,
+    'b': 2
+    })
+    addLogs([{
+    'desc': 'asdfasdf',
+    'address': 'asdfasdfasdf'
+    },
+    {
+    'desc': 'asdfasdf',
+    'address': 'asdfasdfasdf'
+    }
+    ])
+
 })
+
+function setMetadata(metadata) {
+    str = ''
+    $.each(metadata, function(key, value) {
+        str += key + ": " + value + "<br>"
+    })
+
+    $('.metadata').html(str)
+}
+function addLogs(logs) {
+    loglist = $('.log-list')
+    for(var i = 0; i < logs.length; i++) {
+        log = logs[i]
+        loglist.append('<li>'+log.desc + '::' + log.address +'</li>')
+    }
+}
 
 function createMap(markers) {
   $('.map').vectorMap({
