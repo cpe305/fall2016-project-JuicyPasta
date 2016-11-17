@@ -13,8 +13,17 @@ public enum ServiceLogType {
     ServiceLogType(String type) {
         this.type = type;
     }
-    String type() {
+    public String type() {
         return type;
     }
-
+    public static ServiceLogType fromString(String text) {
+        if (text != null) {
+            for (ServiceLogType b : ServiceLogType.values()) {
+                if (text.equalsIgnoreCase(b.type)) {
+                    return b;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Enum value for: " + text + " not found");
+    }
 }

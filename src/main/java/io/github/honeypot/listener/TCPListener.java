@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.*;
@@ -84,6 +85,8 @@ public class TCPListener implements Runnable, AutoCloseable {
                         System.out.println("[*] tcp incoming " + port + " -> " + localPort);
                         Service mockService = portMapping.get(localPort).create();
                         Log log = new Log(mockService.getLogType(), clientSocket.getInetAddress());
+                        log.setLocalPort(localPort);
+                        log.setRemotePort(port);
 
                         threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, log));
                     }

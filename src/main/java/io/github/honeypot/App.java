@@ -24,12 +24,12 @@ public class App implements ServletContextListener {
 
             tcpListener = new TCPListener();
             tcpListener.addService(6667, IRCService::new);
-            tcpListener.addService(6668, SMTPService::new);
+            tcpListener.addService(25, SMTPService::new);
+            tcpListener.addService(2525, SMTPService::new);
             tcpListener.addService(80, HTTPService::new);
             tcpListenerThread = new Thread(tcpListener);
-            System.out.println("HI");
 
-            sshListener = new SSHListener(6666);
+            sshListener = new SSHListener(22);
         } catch (IOException e) {
             throw new HoneypotException(e);
         }

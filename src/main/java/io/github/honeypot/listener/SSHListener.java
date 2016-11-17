@@ -32,8 +32,10 @@ public class SSHListener implements AutoCloseable {
 
     private boolean isClosed;
     private SshServer sshd;
+    private int port;
 
     public SSHListener(int port) {
+        this.port = port;
         isClosed = false;
 
         sshd = SshServer.setUpDefaultServer();
@@ -42,7 +44,7 @@ public class SSHListener implements AutoCloseable {
         AbstractGeneratorHostKeyProvider keyProvider = new SimpleGeneratorHostKeyProvider(new File("hostkey.ser"));
         keyProvider.setAlgorithm("RSA");
         sshd.setKeyPairProvider(keyProvider);
-        sshd.setShellFactory(ShellFactory.INSTANCE);
+        sshd.setShellFactory(null);
 
         sshd.setPublickeyAuthenticator(this::publicKeyAuthenticate);
         sshd.setPasswordAuthenticator(this::passwordAuthenticate);
@@ -55,9 +57,12 @@ public class SSHListener implements AutoCloseable {
     }
 
     private boolean passwordAuthenticate(String username, String password, ServerSession session) {
+        int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
         Log passwordAttemptLog = new Log(logType, addr);
+        passwordAttemptLog.setLocalPort(this.port);
+        passwordAttemptLog.setRemotePort(remotePort);
 
         passwordAttemptLog.addProperty("username", username);
         passwordAttemptLog.addProperty("password", password);
@@ -70,9 +75,13 @@ public class SSHListener implements AutoCloseable {
     }
 
     private boolean publicKeyAuthenticate(String username, PublicKey key, ServerSession session) {
+        int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
         Log pubkeyAttemptLog = new Log(logType, addr);
+        pubkeyAttemptLog.setLocalPort(this.port);
+        pubkeyAttemptLog.setRemotePort(remotePort);
+
 
         pubkeyAttemptLog.addProperty("username", username);
         pubkeyAttemptLog.addProperty("key", key.toString());

@@ -37,23 +37,47 @@
         </div>
         <div class="col-sm-3">
             <div class="card info">
-                <div class="buttons">
-                    <button class="btn btn-primary">ALL</button>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs logTabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#ALL" aria-controls="ALL" role="tab" data-toggle="tab">ALL</a></li>
                     <%for (ServiceLogType type : ServiceLogType.values()) { %>
-                        <button class="btn btn-primary"><%= type %></button>
+                        <li role="presentation" class=""><a href="#<%= type.type() %>" aria-controls="<%= type.type() %>" role="tab" data-toggle="tab"><%= type.type() %></a></li>
+                    <%}%>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="ALL">
+                        <div class="metadata-area">
+                            <h4>metadata</h4>
+                            <div class="metadata well">
+                            </div>
+                        </div>
+
+                        <div class="log-area">
+                            <ul class="log-list">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <%for (ServiceLogType type : ServiceLogType.values()) { %>
+
+                        <div role="tabpanel" class="tab-pane" id="<%=type.type() %>">
+                            <div class="metadata-area">
+                                <h4>metadata</h4>
+                                <div class="metadata well">
+                                </div>
+                            </div>
+
+                            <div class="log-area">
+                                <ul class="log-list">
+                                </ul>
+                            </div>
+
+                        </div>
                     <%}%>
                 </div>
 
-                <div class="metadata-area">
-                    <h4>metadata</h4>
-                    <div class="metadata well">
-                    </div>
-                </div>
-
-                <div class="log-area">
-                    <ul class="log-list">
-                    </ul>
-                </div>
 
             </div>
         </div>

@@ -19,10 +19,14 @@ public class HTTPService extends Service{
 
     @Override
     public String feed(String input) {
-        System.out.println(input);
-//        String res = ""
-//                " HTTP/1.1 302 Found " /
-//        "Location: http://www.iana.org/domains/example/";
-        return "";
+        String toRet = "" +
+        "HTTP/1.1 302 Found\n" +
+        "Location: https://www.google.com\n" +
+        "Content-Type: text/html; charset=UTF-8\n" +
+        "content-length:226\n" +
+        "Accept-Encoding: gzip, deflate, sdch, br\n" +
+        "Accept-Language: en-US,en;q=0.8\n";
+
+        return toRet;
     }
 }

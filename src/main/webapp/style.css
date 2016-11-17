@@ -54,6 +54,10 @@ border: 1px solid black;
 border-radius: 3px;
 }
 
+.logTabs {
+align:center;
+}
+
 .log-list {
 list-style: none;
 margin: 0px;
@@ -66,4 +70,8 @@ border: 1px solid black;
 border-radius: 5px;
 margin-bottom: 2px;
 padding: 2px;
+}
+
+.hidden {
+display:none;
 }

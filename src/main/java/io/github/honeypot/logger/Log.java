@@ -23,6 +23,8 @@ public class Log {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private InetAddress address;
+    private int localPort;
+    private int remotePort;
     private List<String> conversation;
     private Map<String, String> properties;
 
@@ -44,6 +46,14 @@ public class Log {
 
     public void addProperty(String key, String value) {
         properties.put(key, value);
+    }
+
+    public void setLocalPort(int port) {
+        this.localPort = port;
+    }
+
+    public void setRemotePort(int port) {
+        this.remotePort = port;
     }
 
     public void addIncomingMessage(String in) {
@@ -94,10 +104,13 @@ public class Log {
 
     public JSONObject toJson() {
         JSONObject toRet = new JSONObject();
-        toRet.put("event description", desc);
-        toRet.put("start time", startTime);
-        toRet.put("end time", endTime);
+        toRet.put("event-type", type.type());
+        toRet.put("event-description", desc);
+        toRet.put("start-time", startTime);
+        toRet.put("end-time", endTime);
         toRet.put("address", address.getHostAddress());
+        toRet.put("local-port", localPort);
+        toRet.put("remote-port", remotePort);
 
         properties.forEach((key, value) -> toRet.put(key, value));
         return toRet;

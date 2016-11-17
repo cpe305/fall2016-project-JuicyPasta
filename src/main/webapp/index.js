@@ -1,33 +1,24 @@
 $(document).ready(function() {
-    // grab graph points
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/all' : '/log/all'
-    $.get(logpath, function(data) {
-        markers = []
-        for(var i = 0; i < data.length; i++) {
-            event = data[i]
-            markers.push({
-                latLng: [parseFloat(event.latitude), parseFloat(event.longitude)],
-                name: event.address
-            })
-        }
-        createMap(markers)
+    setDataForType('ALL')
+
+    $('.logTabs a').click(function (e) {
+      e.preventDefault()
+
+      setDataForType($(this)[0].innerHTML)
     })
 
-    setMetadata({
-    'a': 1,
-    'b': 2
-    })
-    addLogs([{
-    'desc': 'asdfasdf',
-    'address': 'asdfasdfasdf'
-    },
-    {
-    'desc': 'asdfasdf',
-    'address': 'asdfasdfasdf'
-    }
-    ])
 
 })
+
+function setDataForType(type) {
+    var parent = $('#'+type)
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/' + type : '/log/' + type
+    $.get(logpath, function(logs) {
+        createMap(parseLogs(logs))
+        addLogTabData(parent, logs)
+    })
+}
+
 
 function setMetadata(metadata) {
     str = ''
@@ -37,28 +28,124 @@ function setMetadata(metadata) {
 
     $('.metadata').html(str)
 }
-function addLogs(logs) {
-    loglist = $('.log-list')
-    for(var i = 0; i < logs.length; i++) {
-        log = logs[i]
-        loglist.append('<li>'+log.desc + '::' + log.address +'</li>')
+
+function addLogTabData(parent, logs) {
+    markers = []
+    var loglist = parent.find('.log-list')
+    loglist.empty()
+    for(var i = logs.length-1; i >= 0; i--) {
+        var log = logs[i]
+        var innerDiv = $('<div/>')
+            .addClass('hidden')
+            .addClass('log-info')
+            .html(JSON.stringify(log))
+
+        var newElm = $('<li/>')
+            .addClass('log')
+            .text('(' + log['event-type'] + ') ' + log.address + '::' + log['remote-port'])
+            .append(innerDiv)
+
+        loglist.append(newElm)
+    }
+
+    parent.find('.log').click(function(event) {
+        $(this).find('div').toggleClass('hidden')
+    })
+}
+
+function parseLogs(logs) {
+    var addressFrequencyMapping = {}
+    var addressLocationMapping = {}
+
+    for (var i = 0; i < logs.length; i++) {
+        var log = logs[i];
+        var address = log.address;
+        var coords = [parseFloat(log.latitude), parseFloat(log.longitude)]
+        if (!addressFrequencyMapping[address] && addressFrequencyMapping[address] != 0)
+            addressFrequencyMapping[address] = 1
+        else
+            addressFrequencyMapping[address]++
+
+        addressLocationMapping[address] = coords
+    }
+
+    var coordList = []
+    var dataList = []
+    var addressList = []
+    $.each(addressLocationMapping, function(key, value) {
+        coordList.push(value)
+        dataList.push(addressFrequencyMapping[key])
+        addressList.push(key)
+    })
+
+    return {
+        'coordList': coordList,
+        'dataList': dataList,
+        'addressList': addressList,
     }
 }
 
-function createMap(markers) {
-  $('.map').vectorMap({
-    map: 'world_mill',
-    scaleColors: ['#C8EEFF', '#0071A4'],
-    normalizeFunction: 'polynomial',
-    hoverOpacity: 0,
-    hoverColor: false,
-    markerStyle: {
-      initial: {
-        fill: '#F8E23B',
-        stroke: '#383f47'
-      }
-    },
-    backgroundColor: '#383f47',
-    markers: markers
-  });
+function createMap(data) {
+  // map.addMarker(), can add series data and key also
+  // map.addMarkers()
+
+  this.onMarkerTipShow = function(event, label, index) {
+    label.html(
+        '<b>'+data.addressList[index]+'</b><br/>'+
+        '<b>Connections: </b>'+data.dataList[index]+'</br>'
+      )
+    }
+
+  if (this.map) {
+    this.map.removeAllMarkers()
+
+    this.map.addMarkers(data.coordList, data.dataList)
+  } else {
+      $('.map').vectorMap({
+        map: 'world_mill',
+        scaleColors: ['#C8EEFF', '#0071A4'],
+        normalizeFunction: 'polynomial',
+        hoverOpacity: 0.4,
+        hoverColor: false,
+        markerStyle: {
+          initial: {
+            fill: '#F8E23B',
+            'fill-opacity': 1,
+            stroke: '#383f47'
+          }
+        },
+        backgroundColor: '#383f47',
+        markers: data.coordList,
+        series: {
+            markers: [{
+              attribute: 'fill',
+              scale: ['#FEE5D9', '#A50F15'],
+              values: data.dataList,
+              min: 0,//jvm.min(data),
+              max: 10//jvm.max(data)
+            },
+            {
+              attribute: 'fill-opacity',
+              scale: [1, 1],
+              values: data.dataList,
+              min: 0,//jvm.min(data),
+              max: 100//jvm.max(data)
+            },
+            {
+              attribute: 'r',
+              scale: [5, 25],
+              values: data.dataList,
+              min: 0, //jvm.min(data),
+              max: 100//jvm.max(data)
+            }]
+          },
+
+          onMarkerTipShow: this.onMarkerTipShow,
+      });
+
+      this.map = $('.map').vectorMap('get', 'mapObject')
+  }
 }
+
+
+

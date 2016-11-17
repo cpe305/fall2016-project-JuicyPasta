@@ -43,7 +43,7 @@ public class LogServlet extends HttpServlet {
         if (logType.equals("ALL")) {
             responseObj = listToJson(EventDatabase.getRecentEvents());
         } else {
-            ServiceLogType requestedType = ServiceLogType.valueOf(logType);
+            ServiceLogType requestedType = ServiceLogType.fromString(logType);
             responseObj = listToJson(EventDatabase.getServiceEvents(requestedType));
         }
 
