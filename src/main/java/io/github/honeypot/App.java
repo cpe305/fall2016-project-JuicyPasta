@@ -23,13 +23,13 @@ public class App implements ServletContextListener {
         try {
 
             tcpListener = new TCPListener();
-            tcpListener.addService(6667, IRCService::new);
-            tcpListener.addService(25, SMTPService::new);
-            tcpListener.addService(2525, SMTPService::new);
-            tcpListener.addService(80, HTTPService::new);
+            tcpListener.addService(16667, IRCService::new);
+            tcpListener.addService(10025, SMTPService::new);
+            tcpListener.addService(12525, SMTPService::new);
+            tcpListener.addService(10080, HTTPService::new);
             tcpListenerThread = new Thread(tcpListener);
 
-            sshListener = new SSHListener(22);
+            sshListener = new SSHListener(10022);
         } catch (IOException e) {
             throw new HoneypotException(e);
         }

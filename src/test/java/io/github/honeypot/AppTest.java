@@ -1,5 +1,6 @@
 package io.github.honeypot;
 
+import io.github.honeypot.service.HTTPService;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -30,4 +31,11 @@ public class AppTest extends TestCase {
     public void testApp() {
         assertTrue( true );
     }
+
+    public void testHttpService() {
+        HTTPService service = new HTTPService();
+        assert(service.getPreamble() == null);
+        assert(service.feed() instanceof String);
+    }
+
 }
