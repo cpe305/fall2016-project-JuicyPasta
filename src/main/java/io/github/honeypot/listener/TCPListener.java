@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.*;
@@ -24,8 +23,8 @@ import io.github.honeypot.service.Service;
 /**
  * Created by jackson on 10/2/16.
  */
-public class TCPListener implements Runnable, AutoCloseable {
-    private static final int POOLSIZE = 100;
+public class TCPListener extends Listener {
+    private static final int POOLSIZE = 10;
     private ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
 
     private Selector selector = Selector.open();
@@ -88,7 +87,7 @@ public class TCPListener implements Runnable, AutoCloseable {
                         log.setLocalPort(localPort);
                         log.setRemotePort(port);
 
-                        threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, log));
+                        threadPool.execute(new TCPConnection(mockService, clientSocket, in, out, log, this::triggerObservers));
                     }
                 }
 
@@ -98,4 +97,8 @@ public class TCPListener implements Runnable, AutoCloseable {
         }
     }
 
+    public synchronized void triggerObservers(Object o) {
+        setChanged();
+        notifyObservers(o);
+    }
 }

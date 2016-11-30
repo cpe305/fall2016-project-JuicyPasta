@@ -1,22 +1,48 @@
 $(document).ready(function() {
-    setDataForType('ALL')
+    setHistoryData()
 
-    $('.logTabs a').click(function (e) {
-      e.preventDefault()
-
-      setDataForType($(this)[0].innerHTML)
-    })
-
+    // setDataForType('ALL')
+    //
+    // $('.logTabs a').click(function (e) {
+    //   e.preventDefault()
+    //
+    //   setDataForType($(this)[0].innerHTML)
+    // })
 
 })
 
-function setDataForType(type) {
-    var parent = $('#'+type)
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/' + type : '/log/' + type
+function setHistoryData() {
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/' + type : '/log/HISTORY'
     $.get(logpath, function(logs) {
-        createMap(parseLogs(logs))
-        addLogTabData(parent, logs)
+        console.log(logs)
+        createMap(parseLogs(logs['ALL']))
+
+        $.each(logs, function(key, value) {
+            addTab(key)
+            setDataForType(key, value)
+        })
+        //addLogTabData(parent, logs)
     })
+}
+function addTab(name) {
+    var elm = $("<li role='presentation' class=''><a href='#" +name+ "' aria-controls='" +name+ "' role='tab' data-toggle='tab'>"+ name + "</a></li>")
+    $(".logTabs").append(elm)
+}
+
+function setDataForType(type, logs) {
+
+    var elm = $(
+"<div role='tabpanel' class='tab-pane' id='" + type + "'>" +
+"<div class='log-area'>" +
+"<ul class='log-list'>" +
+"</ul>" +
+"</div>" +
+"</div>")
+
+    $('.tab-content').append(elm)
+
+    var parent = $("#" + type)
+    addLogTabData(parent, logs)
 }
 
 
@@ -35,10 +61,16 @@ function addLogTabData(parent, logs) {
     loglist.empty()
     for(var i = logs.length-1; i >= 0; i--) {
         var log = logs[i]
+
+        var attrs = []
+        $.each(log, function(key, value) {
+            attrs.push(key + ":\t" + value)
+        })
+
         var innerDiv = $('<div/>')
             .addClass('hidden')
             .addClass('log-info')
-            .html(JSON.stringify(log))
+            .html(attrs.join('<br>'))
 
         var newElm = $('<li/>')
             .addClass('log')

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
@@ -20,8 +21,8 @@ public class TCPConnection extends Connection {
     PrintWriter out;
     boolean isAlive = true;
 
-    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out, Log log) {
-        super(log);
+    public TCPConnection(Service service, Socket socket, BufferedReader in, PrintWriter out, Log log, Consumer<Object> notifyObservers) {
+        super(log, notifyObservers);
 
         this.socket = socket;
         this.in = in;

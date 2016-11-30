@@ -3,22 +3,22 @@ package io.github.honeypot.logger;
 /**
  * Created by jackson on 11/2/16.
  */
-public enum ServiceLogType {
+public enum LogType {
     SSH_EVENT("SSH"),
     IRC_EVENT("IRC"),
     SMTP_EVENT("SMTP"),
     HTTP_EVENT("HTTP");
 
     private final String type;
-    ServiceLogType(String type) {
+    LogType(String type) {
         this.type = type;
     }
     public String type() {
         return type;
     }
-    public static ServiceLogType fromString(String text) {
+    public static LogType fromString(String text) {
         if (text != null) {
-            for (ServiceLogType b : ServiceLogType.values()) {
+            for (LogType b : LogType.values()) {
                 if (text.equalsIgnoreCase(b.type)) {
                     return b;
                 }

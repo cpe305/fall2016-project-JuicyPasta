@@ -1,6 +1,6 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.ServiceLogType;
+import io.github.honeypot.logger.LogType;
 
 /**
  * Created by jackson on 10/5/16.
@@ -28,5 +28,5 @@ public abstract class Service {
 
     abstract public String feed(String input);
 
-    abstract public ServiceLogType getLogType();
+    abstract public LogType getLogType();
 }

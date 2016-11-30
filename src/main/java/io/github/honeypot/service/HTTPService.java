@@ -1,15 +1,15 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.ServiceLogType;
+import io.github.honeypot.logger.LogType;
 
 /**
  * Created by jackson on 11/16/16.
  */
 public class HTTPService extends Service{
-    private static ServiceLogType logType = ServiceLogType.HTTP_EVENT;
+    private static LogType logType = LogType.HTTP_EVENT;
 
     @Override
-    public ServiceLogType getLogType() {
+    public LogType getLogType() {
         return logType;
     }
     @Override

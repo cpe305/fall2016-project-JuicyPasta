@@ -7,4 +7,7 @@ public class HoneypotException extends Exception {
     public HoneypotException(Exception e) {
         super(e);
     }
+    public HoneypotException(String s) {
+        super(s);
+    }
 }

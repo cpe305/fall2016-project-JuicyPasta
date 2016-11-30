@@ -1,26 +1,22 @@
 package io.github.honeypot.servlet;
 
+import io.github.honeypot.logger.ConsumerRegistry;
+import io.github.honeypot.logger.ConsumerType;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.LinkedList;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.github.honeypot.logger.EventDatabase;
 import io.github.honeypot.logger.Log;
-import io.github.honeypot.logger.ServiceLogType;
+import io.github.honeypot.logger.LogType;
+import org.json.JSONObject;
 
 /**
  * Created by jackson on 10/15/16.
@@ -30,33 +26,22 @@ public class LogServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String logType = null;
+        String consumerType = null;
         try {
-            logType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
+            consumerType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
         } catch (Exception e) {
             System.err.println(e);
         }
 
         res.setContentType("application/json");
-        JSONArray responseObj;
+        JSONObject responseObj = null;
 
-        if (logType.equals("ALL")) {
-            responseObj = listToJson(EventDatabase.getRecentEvents());
-        } else {
-            ServiceLogType requestedType = ServiceLogType.fromString(logType);
-            responseObj = listToJson(EventDatabase.getServiceEvents(requestedType));
+        if (consumerType.equals("HISTORY")) {
+            responseObj = ConsumerRegistry.getConsumerJsons(ConsumerType.HISTORY_CONSUMER);
         }
 
         PrintWriter out = res.getWriter();
         out.print(responseObj);
         out.flush();
-    }
-
-    public JSONArray listToJson(LinkedList<Log> list) {
-        JSONArray toRet = new JSONArray();
-        for (Log l : list) {
-            toRet.put(l.toJson());
-        }
-        return toRet;
     }
 }

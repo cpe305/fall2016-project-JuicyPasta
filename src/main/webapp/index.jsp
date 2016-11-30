@@ -1,4 +1,3 @@
-<%@ page import="io.github.honeypot.logger.ServiceLogType" %>
 
 <html>
 <head>
@@ -27,55 +26,41 @@
 </head>
 
 <body>
+<div class="title">
+    <h3>Honeypot</h3>
+</div>
+
 <div class="container-fluid">
 
-    <h1>Honeypot</h1>
-
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             <div class="card map"></div>
         </div>
         <div class="col-sm-3">
             <div class="card info">
+                <h4>Logs</h4>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs logTabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#ALL" aria-controls="ALL" role="tab" data-toggle="tab">ALL</a></li>
-                    <%for (ServiceLogType type : ServiceLogType.values()) { %>
-                        <li role="presentation" class=""><a href="#<%= type.type() %>" aria-controls="<%= type.type() %>" role="tab" data-toggle="tab"><%= type.type() %></a></li>
-                    <%}%>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="ALL">
-                        <div class="metadata-area">
-                            <h4>metadata</h4>
-                            <div class="metadata well">
-                            </div>
-                        </div>
-
                         <div class="log-area">
                             <ul class="log-list">
                             </ul>
                         </div>
                     </div>
 
-                    <%for (ServiceLogType type : ServiceLogType.values()) { %>
+                    <%--<%for (ServiceLogType type : ServiceLogType.values()) { %>--%>
+                        <%--<div role="tabpanel" class="tab-pane" id="<%=type.type() %>">--%>
+                            <%--<div class="log-area">--%>
+                                <%--<ul class="log-list">--%>
+                                <%--</ul>--%>
+                            <%--</div>--%>
 
-                        <div role="tabpanel" class="tab-pane" id="<%=type.type() %>">
-                            <div class="metadata-area">
-                                <h4>metadata</h4>
-                                <div class="metadata well">
-                                </div>
-                            </div>
-
-                            <div class="log-area">
-                                <ul class="log-list">
-                                </ul>
-                            </div>
-
-                        </div>
-                    <%}%>
+                        <%--</div>--%>
+                    <%--<%}%>--%>
                 </div>
 
 

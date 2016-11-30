@@ -1,6 +1,6 @@
 package io.github.honeypot.listener;
 
-import org.apache.sshd.common.Closeable;
+import io.github.honeypot.exception.HoneypotRuntimeException;
 import org.apache.sshd.common.util.GenericUtils;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.forward.AcceptAllForwardingFilter;
@@ -16,19 +16,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.security.PublicKey;
 import java.util.Collections;
 
-import io.github.honeypot.logger.EventDatabase;
 import io.github.honeypot.logger.Log;
-import io.github.honeypot.logger.ServiceLogType;
+import io.github.honeypot.logger.LogType;
 
 /**
  * Created by jackson on 11/2/16.
  */
-public class SSHListener implements AutoCloseable {
-    private ServiceLogType logType = ServiceLogType.SSH_EVENT;
+public class SSHListener extends Listener {
+    private LogType logType = LogType.SSH_EVENT;
 
     private boolean isClosed;
     private SshServer sshd;
@@ -66,10 +64,12 @@ public class SSHListener implements AutoCloseable {
 
         passwordAttemptLog.addProperty("username", username);
         passwordAttemptLog.addProperty("password", password);
+        passwordAttemptLog.addProperty("credentials", username+"::"+password);
 
         passwordAttemptLog.end();
 
-        EventDatabase.logEvent(passwordAttemptLog);
+        setChanged();
+        notifyObservers(passwordAttemptLog);
 
         return true;
     }
@@ -82,13 +82,14 @@ public class SSHListener implements AutoCloseable {
         pubkeyAttemptLog.setLocalPort(this.port);
         pubkeyAttemptLog.setRemotePort(remotePort);
 
-
         pubkeyAttemptLog.addProperty("username", username);
         pubkeyAttemptLog.addProperty("key", key.toString());
+        pubkeyAttemptLog.addProperty("credentials", username+"::"+key.toString());
 
         pubkeyAttemptLog.end();
 
-        EventDatabase.logEvent(pubkeyAttemptLog);
+        setChanged();
+        notifyObservers(pubkeyAttemptLog);
 
         return true;
     }
@@ -97,8 +98,13 @@ public class SSHListener implements AutoCloseable {
         private static final InteractiveProcessShellFactory INSTANCE = new InteractiveProcessShellFactory();
     }
 
-    public void start() throws IOException {
-        sshd.start();
+    @Override
+    public void run() {
+        try {
+            sshd.start();
+        } catch (IOException e) {
+            throw new HoneypotRuntimeException(e);
+        }
     }
 
     @Override

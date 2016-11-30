@@ -25,9 +25,6 @@ public class AppTest extends TestCase {
         return new TestSuite( AppTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
     public void testApp() {
         assertTrue( true );
     }
@@ -35,7 +32,6 @@ public class AppTest extends TestCase {
     public void testHttpService() {
         HTTPService service = new HTTPService();
         assert(service.getPreamble() == null);
-        assert(service.feed() instanceof String);
     }
 
 }

@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import io.github.honeypot.exception.HoneypotRuntimeException;
-import io.github.honeypot.logger.EventDatabase;
 import io.github.honeypot.logger.Log;
 import io.github.honeypot.service.Service;
 
@@ -17,10 +17,12 @@ public abstract class Connection implements Runnable, Closeable {
     Service service;
     Log log;
     boolean hasTalked;
+    private Consumer<Object> notifyObservers;
 
-    public Connection(Log log) {
+    public Connection(Log log, Consumer<Object> notifyObservers) {
         this.log = log;
         this.hasTalked = false;
+        this.notifyObservers = notifyObservers;
     }
 
     public abstract String read() throws IOException;
@@ -56,8 +58,7 @@ public abstract class Connection implements Runnable, Closeable {
                     write(output);
                 }
             }
-
-            EventDatabase.logEvent(log);
+            this.notifyObservers.accept(log);
 
             close();
         } catch (IOException e) {

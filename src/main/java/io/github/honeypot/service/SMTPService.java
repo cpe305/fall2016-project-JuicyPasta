@@ -3,15 +3,13 @@ package io.github.honeypot.service;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 
-import io.github.honeypot.logger.ServiceLogType;
-
-import java.time.LocalDateTime;
+import io.github.honeypot.logger.LogType;
 
 /**
  * Created by jackson on 10/10/16.
  */
 public class SMTPService extends Service {
-    private ServiceLogType logType = ServiceLogType.SMTP_EVENT;
+    private LogType logType = LogType.SMTP_EVENT;
 
     public SMTPService() {
         super.serviceName = "SMTPService";
@@ -21,14 +19,14 @@ public class SMTPService extends Service {
 
     @Override
     public String getPreamble() {
-        String date = DateFormatUtils.SMTP_DATETIME_FORMAT.format(LocalDateTime.now());
+        String date = DateFormatUtils.SMTP_DATETIME_FORMAT.format(System.currentTimeMillis());
         String preamble = String.format("%d %s ESMTP server ready %s", 220, hostname, date);
 
         return preamble;
     }
 
     @Override
-    public ServiceLogType getLogType() {
+    public LogType getLogType() {
         return logType;
     }
 

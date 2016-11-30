@@ -1,12 +1,12 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.ServiceLogType;
+import io.github.honeypot.logger.LogType;
 
 /**
  * Created by jackson on 10/10/16.
  */
 public class IRCService extends Service {
-    private ServiceLogType logType = ServiceLogType.IRC_EVENT;
+    private LogType logType = LogType.IRC_EVENT;
 
     private String name;
     private String password;
@@ -21,7 +21,7 @@ public class IRCService extends Service {
     private String hostname = ":org.honeypot.com:";
 
     @Override
-    public ServiceLogType getLogType() {
+    public LogType getLogType() {
         return logType;
     }
     @Override
