@@ -10,12 +10,15 @@ public enum LogType {
     HTTP_EVENT("HTTP");
 
     private final String type;
+
     LogType(String type) {
         this.type = type;
     }
+
     public String type() {
         return type;
     }
+
     public static LogType fromString(String text) {
         if (text != null) {
             for (LogType b : LogType.values()) {

@@ -2,21 +2,15 @@ package io.github.honeypot.servlet;
 
 import io.github.honeypot.logger.ConsumerRegistry;
 import io.github.honeypot.logger.ConsumerType;
-import org.json.JSONArray;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.util.LinkedList;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import io.github.honeypot.logger.Log;
-import io.github.honeypot.logger.LogType;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URLDecoder;
 
 /**
  * Created by jackson on 10/15/16.
@@ -37,7 +31,7 @@ public class LogServlet extends HttpServlet {
         JSONObject responseObj = null;
 
         if (consumerType.equals("HISTORY")) {
-            responseObj = ConsumerRegistry.getConsumerJsons(ConsumerType.HISTORY_CONSUMER);
+            responseObj = ConsumerRegistry.getInstance().getConsumerJsons(ConsumerType.HISTORY_CONSUMER);
         }
 
         PrintWriter out = res.getWriter();

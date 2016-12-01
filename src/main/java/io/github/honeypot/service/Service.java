@@ -1,19 +1,30 @@
 package io.github.honeypot.service;
 
-import io.github.honeypot.logger.LogType;
+import io.github.honeypot.logger.Log;
 
 /**
  * Created by jackson on 10/5/16.
  */
 public abstract class Service {
-    public String serviceName;
-
+    private String serviceName;
     private boolean alive;
-    private boolean isFirst;
+
+    Log log;
 
     public Service() {
         this.alive = true;
-        this.isFirst = true;
+    }
+    public void attachLog(Log log) {
+        this.log = log;
+    }
+    public Log getLog() {
+        return this.log;
+    }
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+    public String getServiceName() {
+        return this.serviceName;
     }
 
     public boolean isAlive() {
@@ -27,6 +38,4 @@ public abstract class Service {
     abstract public String getPreamble();
 
     abstract public String feed(String input);
-
-    abstract public LogType getLogType();
 }

@@ -1,5 +1,6 @@
 package io.github.honeypot.logger;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -8,13 +9,20 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jackson on 10/14/16.
  */
+
+// TODO: refactor this so that there is a list of LogType 'tags' and move all of the other attributes into properties
 public class Log implements Serializable {
     LogType type;
     private String description;
@@ -25,17 +33,68 @@ public class Log implements Serializable {
     private int remotePort;
     private List<String> conversation;
     private Map<String, String> properties;
-
-    public Log(LogType type, InetAddress incomingAddress) {
+    private static final long serialVersionUID = 9182119070764305069L;
+    public Log(LogType type) {
         this.type = type;
         this.startTime = LocalDateTime.now();
-        this.address = incomingAddress;
-
         this.conversation = new LinkedList<>();
-
         this.properties = new HashMap<>();
+    }
 
-        addLocation();
+    public Log(JSONObject obj) {
+        if (obj.has("event-type")) {
+            this.type = LogType.fromString(obj.getString("event-type"));
+            obj.remove("event-type");
+        }
+
+        if (obj.has("event-description")) {
+            this.description = obj.getString("event-description");
+            obj.remove("event-description");
+        }
+
+        if (obj.has("start-time")) {
+            this.startTime = LocalDateTime.parse(obj.getString("start-time"), DateTimeFormatter.ISO_DATE_TIME);
+            obj.remove("start-time");
+        }
+
+        if (obj.has("end-time")) {
+            this.startTime = LocalDateTime.parse(obj.getString("end-time"), DateTimeFormatter.ISO_DATE_TIME);
+            obj.remove("end-time");
+        }
+
+        if (obj.has("address")) {
+            try {
+                this.address = InetAddress.getByName(obj.getString("address"));
+                obj.remove("address");
+            } catch (UnknownHostException e) {
+                System.err.println(e);
+            }
+        }
+
+        if (obj.has("local-port")) {
+            this.localPort = obj.getInt("local-port");
+            obj.remove("local-port");
+        }
+
+        if (obj.has("remote-port")) {
+            this.remotePort = obj.getInt("remote-port");
+            obj.remove("remote-port");
+        }
+
+        if (obj.has("conversation")) {
+            JSONArray conversationJson = obj.getJSONArray("conversation");
+            List<String> conversation = new LinkedList<>();
+            for (Object o : conversationJson) {
+                conversation.add(String.valueOf(o));
+            }
+            this.conversation = conversation;
+            obj.remove("conversation");
+        }
+
+        properties = new HashMap<>();
+        for (String key : obj.keySet()) {
+            properties.put(key, obj.getString(key));
+        }
     }
 
     public void setDescription(String desc) {
@@ -60,6 +119,11 @@ public class Log implements Serializable {
 
     public void setRemotePort(int port) {
         this.remotePort = port;
+    }
+
+    public void setInetAddress(InetAddress address) {
+        this.address = address;
+        addLocation();
     }
 
     public void addIncomingMessage(String in) {
@@ -122,7 +186,7 @@ public class Log implements Serializable {
         toRet.put("address", address.getHostAddress());
         toRet.put("local-port", localPort);
         toRet.put("remote-port", remotePort);
-
+        toRet.put("conversation", conversation);
         properties.forEach((key, value) -> toRet.put(key, value));
         return toRet;
     }

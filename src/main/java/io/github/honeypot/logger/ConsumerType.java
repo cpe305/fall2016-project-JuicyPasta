@@ -8,12 +8,15 @@ public enum ConsumerType {
     ATTRIBUTE_CONSUMER("ATTRIBUTE");
 
     private final String type;
+
     ConsumerType(String type) {
         this.type = type;
     }
+
     public String type() {
         return type;
     }
+
     public static ConsumerType fromString(String text) {
         if (text != null) {
             for (ConsumerType b : ConsumerType.values()) {

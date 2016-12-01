@@ -2,7 +2,6 @@ package io.github.honeypot.logger;
 
 import io.github.honeypot.exception.HoneypotRuntimeException;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.Observable;
@@ -14,8 +13,8 @@ public class HistoryLogConsumer extends LogConsumer {
     private int listLength;
     public LinkedList<Log> recentEvents;
 
-    public HistoryLogConsumer(int length) {
-        super();
+    public HistoryLogConsumer(String name, int length) {
+        super(name);
         recentEvents = new LinkedList<>();
         this.listLength = length;
     }
@@ -23,7 +22,7 @@ public class HistoryLogConsumer extends LogConsumer {
     @Override
     public void update(Observable subject, Object data) {
         if (data instanceof Log) {
-            Log log = (Log)data;
+            Log log = (Log) data;
             if (super.shouldLog(log.type)) {
 
                 synchronized (recentEvents) {

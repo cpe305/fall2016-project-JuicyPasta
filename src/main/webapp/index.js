@@ -12,7 +12,7 @@ $(document).ready(function() {
 })
 
 function setHistoryData() {
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/' + type : '/log/HISTORY'
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/HISTORY' : '/log/HISTORY'
     $.get(logpath, function(logs) {
         console.log(logs)
         createMap(parseLogs(logs['ALL']))

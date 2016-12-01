@@ -1,6 +1,9 @@
 package io.github.honeypot.listener;
 
 import io.github.honeypot.exception.HoneypotRuntimeException;
+import io.github.honeypot.logger.Log;
+import io.github.honeypot.logger.LogFactory;
+import io.github.honeypot.logger.LogType;
 import org.apache.sshd.common.util.GenericUtils;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.forward.AcceptAllForwardingFilter;
@@ -19,23 +22,20 @@ import java.net.InetSocketAddress;
 import java.security.PublicKey;
 import java.util.Collections;
 
-import io.github.honeypot.logger.Log;
-import io.github.honeypot.logger.LogType;
-
 /**
  * Created by jackson on 11/2/16.
  */
 public class SSHListener extends Listener {
-    private LogType logType = LogType.SSH_EVENT;
-
     private boolean isClosed;
     private SshServer sshd;
     private int port;
+    private LogFactory logFactory;
 
-    public SSHListener(int port) {
+    public SSHListener(int port, LogFactory logFactory) {
         this.port = port;
-        isClosed = false;
+        this.isClosed = false;
 
+        this.logFactory = logFactory;
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
 
@@ -58,40 +58,44 @@ public class SSHListener extends Listener {
         int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
-        Log passwordAttemptLog = new Log(logType, addr);
+        Log passwordAttemptLog = logFactory.create();
         passwordAttemptLog.setLocalPort(this.port);
         passwordAttemptLog.setRemotePort(remotePort);
+        passwordAttemptLog.setInetAddress(addr);
 
+        passwordAttemptLog.setDescription("Attempted connection with a password");
         passwordAttemptLog.addProperty("username", username);
         passwordAttemptLog.addProperty("password", password);
-        passwordAttemptLog.addProperty("credentials", username+"::"+password);
+        passwordAttemptLog.addProperty("credentials", username + "::" + password);
 
         passwordAttemptLog.end();
 
         setChanged();
         notifyObservers(passwordAttemptLog);
 
-        return true;
+        return false;
     }
 
     private boolean publicKeyAuthenticate(String username, PublicKey key, ServerSession session) {
         int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
-        Log pubkeyAttemptLog = new Log(logType, addr);
+        Log pubkeyAttemptLog = logFactory.create();
         pubkeyAttemptLog.setLocalPort(this.port);
         pubkeyAttemptLog.setRemotePort(remotePort);
+        pubkeyAttemptLog.setInetAddress(addr);
 
+        pubkeyAttemptLog.setDescription("Attempted connection with a public key");
         pubkeyAttemptLog.addProperty("username", username);
         pubkeyAttemptLog.addProperty("key", key.toString());
-        pubkeyAttemptLog.addProperty("credentials", username+"::"+key.toString());
+        pubkeyAttemptLog.addProperty("credentials", username + "::" + key.toString());
 
         pubkeyAttemptLog.end();
 
         setChanged();
         notifyObservers(pubkeyAttemptLog);
 
-        return true;
+        return false;
     }
 
     private static class ShellFactory extends InteractiveProcessShellFactory {

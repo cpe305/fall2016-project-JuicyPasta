@@ -1,18 +1,15 @@
 package io.github.honeypot.service;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-
-
+import io.github.honeypot.logger.Log;
 import io.github.honeypot.logger.LogType;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * Created by jackson on 10/10/16.
  */
 public class SMTPService extends Service {
-    private LogType logType = LogType.SMTP_EVENT;
-
     public SMTPService() {
-        super.serviceName = "SMTPService";
+        super.setServiceName("SMTPService");
     }
 
     public String hostname = ":org.honeypot.com:";
@@ -23,11 +20,6 @@ public class SMTPService extends Service {
         String preamble = String.format("%d %s ESMTP server ready %s", 220, hostname, date);
 
         return preamble;
-    }
-
-    @Override
-    public LogType getLogType() {
-        return logType;
     }
 
     @Override

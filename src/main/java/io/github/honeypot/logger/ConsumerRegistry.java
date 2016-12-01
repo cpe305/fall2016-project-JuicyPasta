@@ -12,26 +12,31 @@ import java.util.List;
 public class ConsumerRegistry {
     public static EnumMap<ConsumerType, List<LogConsumer>> consumersMap;
 
-    static {
+    public ConsumerRegistry() {
         consumersMap = new EnumMap<>(ConsumerType.class);
 
-        for(ConsumerType k : ConsumerType.values()) {
+        for (ConsumerType k : ConsumerType.values()) {
             consumersMap.put(k, new LinkedList<>());
         }
     }
 
-    public static void addConsumer(LogConsumer consumer) {
-        List consumersList  = consumersMap.get(consumer.getType());
+    public void addConsumer(LogConsumer consumer) {
+        List consumersList = consumersMap.get(consumer.getType());
         consumersList.add(consumer);
     }
-    public static JSONObject getConsumerJsons(ConsumerType type) {
+
+    public JSONObject getConsumerJsons(ConsumerType type) {
         List<LogConsumer> consumersList = consumersMap.get(type);
         JSONObject toRet = new JSONObject();
         for (LogConsumer consumer : consumersList) {
-            System.out.println("NAME:"+ consumer.name);
-            toRet.put(consumer.name, consumer.toJson());
+            toRet.put(consumer.getName(), consumer.toJson());
         }
 
         return toRet;
+    }
+
+    private static ConsumerRegistry INSTANCE = new ConsumerRegistry();
+    public static ConsumerRegistry getInstance() {
+        return INSTANCE;
     }
 }

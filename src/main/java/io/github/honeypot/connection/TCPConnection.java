@@ -1,16 +1,14 @@
 package io.github.honeypot.connection;
 
+import io.github.honeypot.logger.Log;
+import io.github.honeypot.service.Service;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
-
-import io.github.honeypot.logger.Log;
-import io.github.honeypot.service.Service;
 
 /**
  * Created by jackson on 10/5/16.

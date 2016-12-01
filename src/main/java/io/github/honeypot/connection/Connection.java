@@ -1,14 +1,13 @@
 package io.github.honeypot.connection;
 
+import io.github.honeypot.exception.HoneypotRuntimeException;
+import io.github.honeypot.logger.Log;
+import io.github.honeypot.service.Service;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Consumer;
-
-import io.github.honeypot.exception.HoneypotRuntimeException;
-import io.github.honeypot.logger.Log;
-import io.github.honeypot.service.Service;
 
 /**
  * Created by jackson on 10/2/16.

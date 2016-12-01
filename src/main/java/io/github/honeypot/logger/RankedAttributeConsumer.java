@@ -1,10 +1,8 @@
 package io.github.honeypot.logger;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
 /**
@@ -13,8 +11,9 @@ import java.util.Observable;
 public class RankedAttributeConsumer extends LogConsumer {
     private String attrToRank;
     private HashMap<Object, Integer> ranking;
-    public RankedAttributeConsumer(String attrToRank) {
-        super();
+
+    public RankedAttributeConsumer(String name, String attrToRank) {
+        super(name);
         this.attrToRank = attrToRank;
         this.ranking = new HashMap<>();
     }

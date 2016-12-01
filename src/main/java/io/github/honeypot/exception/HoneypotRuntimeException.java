@@ -7,6 +7,7 @@ public class HoneypotRuntimeException extends RuntimeException {
     public HoneypotRuntimeException(Exception e) {
         super(e);
     }
+
     public HoneypotRuntimeException(String s) {
         super(s);
     }
