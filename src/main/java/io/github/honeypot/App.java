@@ -120,39 +120,10 @@ public class App implements ServletContextListener {
 
         tcpListenerThread.start();
         sshListenerThread.start();
-
-
-//        try {
-//            FileInputStream fin = new FileInputStream("/var/log/honeypot/log.ser");
-//            ObjectInputStream ois = new ObjectInputStream(fin);
-//            List<Log> logs = (List<Log>) ois.readObject();
-//
-//            for (Log log : logs) {
-//                System.out.println(log.toString());
-//                persistenceObservable.makeChange(log);
-//                tempPersistence.makeChange(log);
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            System.err.print(e);
-//        }
-
-
     }
 
     @Override
     public final void contextDestroyed(ServletContextEvent context) {
-
-        /*
-        try {
-            List<Log> logs = allConsumer.recentEvents;
-            FileOutputStream fout = new FileOutputStream("/var/log/honeypot/log.ser");
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(logs);
-
-        } catch (IOException e) {
-            throw new HoneypotRuntimeException(e);
-        }
-        */
 
         try {
             tcpListener.close();
