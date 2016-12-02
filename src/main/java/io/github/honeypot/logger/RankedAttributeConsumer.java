@@ -1,6 +1,7 @@
 package io.github.honeypot.logger;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Observable;
@@ -27,7 +28,7 @@ public class RankedAttributeConsumer extends LogConsumer {
                 if (attributeValue != null) {
                     synchronized (ranking) {
                         if (ranking.containsKey(attributeValue)) {
-                            ranking.put(attributeValue, ranking.get(attributeValue));
+                            ranking.put(attributeValue, ranking.get(attributeValue)+1);
                         } else {
                             ranking.put(attributeValue, 1);
                         }
@@ -39,8 +40,7 @@ public class RankedAttributeConsumer extends LogConsumer {
 
     @Override
     public JSONArray toJson() {
-
-        return null;
+        return new JSONArray().put(new JSONObject(ranking));
     }
 
     @Override

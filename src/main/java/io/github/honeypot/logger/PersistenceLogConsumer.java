@@ -57,7 +57,6 @@ public class PersistenceLogConsumer extends LogConsumer {
         File logFolder = new File(LOG_FOLDER);
 
         for (File fileEntry : logFolder.listFiles()) {
-            System.out.println(fileEntry.toString());
             if (fileEntry.isFile() && fileEntry.toString().endsWith(".out")) {
                 BufferedReader reader = new BufferedReader(new FileReader(fileEntry));
                 reader.lines().map((str)->new Log(new JSONObject(str))).forEachOrdered(consumer);

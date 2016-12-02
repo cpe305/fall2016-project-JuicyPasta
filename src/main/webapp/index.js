@@ -1,31 +1,63 @@
 $(document).ready(function() {
-    setHistoryData()
+    var logs = ["ALL", "SSH", "HTTP", "SMTP", "IRC"]
+    // tabs and click handlers
+    logs.forEach(function(key) {
+        addTab(key)
+    })
 
-    // setDataForType('ALL')
-    //
-    // $('.logTabs a').click(function (e) {
-    //   e.preventDefault()
-    //
-    //   setDataForType($(this)[0].innerHTML)
-    // })
 
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/TOP_COUNTRIES' : '/log/TOP_COUNTRIES'
+    $.get(logpath, function(logObj) {
+        console.log(logObj)
+        setMetadata(logObj["TOP_COUNTRIES"][0])
+    })
 })
 
-function setHistoryData() {
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/HISTORY' : '/log/HISTORY'
-    $.get(logpath, function(logs) {
-        console.log(logs)
-        createMap(parseLogs(logs['ALL']))
-
-        $.each(logs, function(key, value) {
-            addTab(key)
-            setDataForType(key, value)
-        })
-        //addLogTabData(parent, logs)
+function setMetadata(metadata) {
+    var data = []
+    $.each(metadata, function(key, value) {
+        data.push({key:key,value:value})
     })
+    data.sort(function(a,b) {
+        return a.value - b.value
+    })
+
+    var nums = []
+    data.forEach(function(obj) {
+        nums.push(obj.value)
+    })
+
+
+    d3.select(".chart").selectAll("div")
+        .data(data)
+        .enter()
+        .append("div")
+        .style("width", function(d) {
+            return d.value * 10 + "px"
+        })
+        .text(function(d) {
+            return d.key + ": " + d.value
+        })
+
 }
+
 function addTab(name) {
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/'+name : '/log/' + name
     var elm = $("<li role='presentation' class=''><a href='#" +name+ "' aria-controls='" +name+ "' role='tab' data-toggle='tab'>"+ name + "</a></li>")
+    elm.click(function() {
+        $.get(logpath, function(logObj) {
+            var logs = logObj[name]
+            setDataForType(name, logs)
+            createMap(parseLogs(logs))
+        })
+    })
+    if (name == "ALL") {
+        $.get(logpath, function(logObj) {
+            var logs = logObj[name]
+            setDataForType(name, logs)
+            createMap(parseLogs(logs))
+        })
+    }
     $(".logTabs").append(elm)
 }
 
@@ -45,15 +77,6 @@ function setDataForType(type, logs) {
     addLogTabData(parent, logs)
 }
 
-
-function setMetadata(metadata) {
-    str = ''
-    $.each(metadata, function(key, value) {
-        str += key + ": " + value + "<br>"
-    })
-
-    $('.metadata').html(str)
-}
 
 function addLogTabData(parent, logs) {
     markers = []
@@ -118,8 +141,8 @@ function parseLogs(logs) {
 }
 
 function createMap(data) {
-  // map.addMarker(), can add series data and key also
-  // map.addMarkers()
+    var mean = calcMean(data.dataList)
+    var sigma = calcSigma(data.dataList, mean)
 
   this.onMarkerTipShow = function(event, label, index) {
     label.html(
@@ -130,45 +153,38 @@ function createMap(data) {
 
   if (this.map) {
     this.map.removeAllMarkers()
-
-    this.map.addMarkers(data.coordList, data.dataList)
-  } else {
+    this.map.remove()
+  }
       $('.map').vectorMap({
         map: 'world_mill',
-        scaleColors: ['#C8EEFF', '#0071A4'],
         normalizeFunction: 'polynomial',
         hoverOpacity: 0.4,
         hoverColor: false,
         markerStyle: {
           initial: {
-            fill: '#F8E23B',
-            'fill-opacity': 1,
+            fill: '#FF122B',
+            'fill-opacity': 0.5,
+            r:3,
             stroke: '#383f47'
           }
         },
         backgroundColor: '#383f47',
         markers: data.coordList,
         series: {
-            markers: [{
+            markers: [
+                {
               attribute: 'fill',
-              scale: ['#FEE5D9', '#A50F15'],
+              scale: ['#FF0000', '#2F0000'],
               values: data.dataList,
-              min: 0,//jvm.min(data),
-              max: 10//jvm.max(data)
-            },
-            {
-              attribute: 'fill-opacity',
-              scale: [1, 1],
-              values: data.dataList,
-              min: 0,//jvm.min(data),
-              max: 100//jvm.max(data)
+              min: Math.max(mean - sigma * 3, 0),
+              max: Math.min(mean + sigma * 3, jvm.max(data.dataList))
             },
             {
               attribute: 'r',
-              scale: [5, 25],
+              scale: [3, 15],
               values: data.dataList,
-              min: 0, //jvm.min(data),
-              max: 100//jvm.max(data)
+              min: Math.max(mean - sigma * 3, 0),
+              max: mean + Math.min(mean + sigma * 3, jvm.max(data.dataList))
             }]
           },
 
@@ -176,7 +192,35 @@ function createMap(data) {
       });
 
       this.map = $('.map').vectorMap('get', 'mapObject')
-  }
+}
+
+function calcMean(list) {
+    if (list.length == 0)
+        return 0
+
+    var size = list.length
+
+    var total = list[0];
+    for (var i = 0; i < size; i++)
+        if (list[i] < 1000)
+            total += list[i]
+
+    return total / size
+}
+function calcSigma(list, mean) {
+    if (!mean)
+        mean = calcMean(list)
+
+    var size = list.length;
+
+    var totalDev = 0
+    for (var i = 0; i < size; i++) {
+        var dev = Math.abs(mean - list[i])
+            if (list[i] < 1000)
+                totalDev += dev
+    }
+
+    return totalDev / size
 }
 
 

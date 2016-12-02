@@ -3,6 +3,7 @@ package io.github.honeypot.logger;
 import org.json.JSONObject;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,29 +11,25 @@ import java.util.List;
  * Created by jackson on 11/29/16.
  */
 public class ConsumerRegistry {
-    public static EnumMap<ConsumerType, List<LogConsumer>> consumersMap;
+    public static HashMap<String, LogConsumer> consumersMap;
 
     public ConsumerRegistry() {
-        consumersMap = new EnumMap<>(ConsumerType.class);
-
-        for (ConsumerType k : ConsumerType.values()) {
-            consumersMap.put(k, new LinkedList<>());
-        }
+        this.consumersMap = new HashMap<>();
     }
 
-    public void addConsumer(LogConsumer consumer) {
-        List consumersList = consumersMap.get(consumer.getType());
-        consumersList.add(consumer);
+    public void addConsumer(String name, LogConsumer consumer) {
+        consumersMap.put(name, consumer);
     }
 
-    public JSONObject getConsumerJsons(ConsumerType type) {
-        List<LogConsumer> consumersList = consumersMap.get(type);
+    public JSONObject getConsumerJson(String name) {
         JSONObject toRet = new JSONObject();
-        for (LogConsumer consumer : consumersList) {
-            toRet.put(consumer.getName(), consumer.toJson());
-        }
+        LogConsumer consumer = consumersMap.get(name);
+        if (consumer != null) {
+            toRet.put(name, consumer.toJson());
 
-        return toRet;
+            return toRet;
+        }
+        return null;
     }
 
     private static ConsumerRegistry INSTANCE = new ConsumerRegistry();

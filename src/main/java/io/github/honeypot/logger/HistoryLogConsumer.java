@@ -11,11 +11,11 @@ import java.util.Observable;
  */
 public class HistoryLogConsumer extends LogConsumer {
     private int listLength;
-    public LinkedList<Log> recentEvents;
+    public JSONArray recentEvents;
 
     public HistoryLogConsumer(String name, int length) {
         super(name);
-        recentEvents = new LinkedList<>();
+        recentEvents = new JSONArray();
         this.listLength = length;
     }
 
@@ -24,12 +24,13 @@ public class HistoryLogConsumer extends LogConsumer {
         if (data instanceof Log) {
             Log log = (Log) data;
             if (super.shouldLog(log.type)) {
-
                 synchronized (recentEvents) {
-                    recentEvents.add(log);
-                    while (recentEvents.size() > listLength) {
-                        recentEvents.removeLast();
+
+                    recentEvents.put(log.toJson());
+                    while (recentEvents.length() > listLength) {
+                        recentEvents.remove(0);
                     }
+
                 }
             }
         } else {
@@ -37,17 +38,10 @@ public class HistoryLogConsumer extends LogConsumer {
         }
     }
 
+
     @Override
     public JSONArray toJson() {
-        JSONArray data = new JSONArray();
-
-        synchronized (recentEvents) {
-            for (Log log : recentEvents) {
-                data.put(log.toJson());
-            }
-        }
-
-        return data;
+        return recentEvents;
     }
 
     @Override

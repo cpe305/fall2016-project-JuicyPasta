@@ -30,6 +30,7 @@ public class TCPListener extends Listener {
 
     private Selector selector = Selector.open();
     private ServerSocketChannel serverChannel;
+    private boolean isRunning = true;
 
     private class FactoryPack {
         ServiceFactory serviceFactory;
@@ -57,6 +58,7 @@ public class TCPListener extends Listener {
 
     @Override
     public void close() throws IOException {
+        isRunning = false;
         threadPool.shutdown();
         serverChannel.close();
         selector.close();
@@ -65,7 +67,7 @@ public class TCPListener extends Listener {
     @Override
     public void run() {
         try {
-            while (selector.isOpen()) {
+            while (isRunning && selector.isOpen()) {
                 selector.select();
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
 

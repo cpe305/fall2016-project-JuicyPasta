@@ -55,26 +55,25 @@ public class App implements ServletContextListener {
             smtpConsumer.addAcceptableType(LogType.SMTP_EVENT);
 
             LogConsumer ircConsumer = new HistoryLogConsumer("IRC", LOG_HISTORY);
+
             ircConsumer.addAcceptableType(LogType.IRC_EVENT);
 
             LogConsumer sshConsumer = new HistoryLogConsumer("SSH", LOG_HISTORY);
             sshConsumer.addAcceptableType(LogType.SSH_EVENT);
 
-            LogConsumer sshRankedByCountry = new RankedAttributeConsumer("Top SSH countries", "country");
-            sshRankedByCountry.addAcceptableType(LogType.SSH_EVENT);
-
-            LogConsumer sshRankedByCredentials = new RankedAttributeConsumer("Top SSH credentials", "credentials");
-            sshRankedByCredentials.addAcceptableType(LogType.SSH_EVENT);
+            LogConsumer topCountries = new RankedAttributeConsumer("TOP_COUNTRIES", "country");
+            topCountries.setAcceptAll();
 
             /**
              * Register LogConsumers
              */
             ConsumerRegistry registry = ConsumerRegistry.getInstance();
-            registry.addConsumer(allConsumer);
-            registry.addConsumer(httpConsumer);
-            registry.addConsumer(smtpConsumer);
-            registry.addConsumer(sshConsumer);
-            registry.addConsumer(ircConsumer);
+            registry.addConsumer("ALL", allConsumer);
+            registry.addConsumer("HTTP", httpConsumer);
+            registry.addConsumer("SMTP", smtpConsumer);
+            registry.addConsumer("SSH", sshConsumer);
+            registry.addConsumer("IRC", ircConsumer);
+            registry.addConsumer("TOP_COUNTRIES", topCountries);
 
             /**
              * Initialize Listeners
@@ -93,9 +92,9 @@ public class App implements ServletContextListener {
              * Attach LogConsumers to Listeners
              */
             // loads everything from a log file
-            addObservers(persistenceObservable, allConsumer, httpConsumer, smtpConsumer, ircConsumer);
-            addObservers(tcpListener, persistentConsumer, allConsumer, httpConsumer, smtpConsumer, ircConsumer);
-            addObservers(sshListener, persistentConsumer, allConsumer, sshConsumer);
+            addObservers(persistenceObservable, topCountries, allConsumer, httpConsumer, smtpConsumer, ircConsumer, sshConsumer);
+            addObservers(sshListener, topCountries, persistentConsumer, allConsumer, sshConsumer);
+            addObservers(tcpListener, topCountries, persistentConsumer, allConsumer, httpConsumer, smtpConsumer, ircConsumer);
 
             /**
              * Start Listeners

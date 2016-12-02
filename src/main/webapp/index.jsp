@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>honeypot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js" integrity="sha256-zbE3mv7cXuSkW7mhK6Y5vnY6eXmPZPPRUYpUcNfVM/A=" crossorigin="anonymous"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -22,12 +23,12 @@
     <script src="http://jvectormap.com/js/jquery-jvectormap-2.0.3.min.js"></script>
     <script src="http://jvectormap.com/js/jquery-jvectormap-world-mill.js"></script>
     <script src="index.js"></script>
-
 </head>
 
 <body>
 <div class="title">
     <h3>Honeypot</h3>
+    <h4><a href="https://cpe305.github.io/fall2016-project-JuicyPasta/">docs</a></h4>
 </div>
 
 <div class="container-fluid">
@@ -51,22 +52,18 @@
                             </ul>
                         </div>
                     </div>
-
-                    <%--<%for (ServiceLogType type : ServiceLogType.values()) { %>--%>
-                        <%--<div role="tabpanel" class="tab-pane" id="<%=type.type() %>">--%>
-                            <%--<div class="log-area">--%>
-                                <%--<ul class="log-list">--%>
-                                <%--</ul>--%>
-                            <%--</div>--%>
-
-                        <%--</div>--%>
-                    <%--<%}%>--%>
                 </div>
-
-
             </div>
         </div>
 
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card info">
+                <h4>Top Countries</h4>
+                <div class="chart bordered"></div>
+            </div>
+        </div>
     </div>
 
 </div>

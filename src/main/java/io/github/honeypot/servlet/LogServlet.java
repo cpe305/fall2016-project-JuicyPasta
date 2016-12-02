@@ -30,12 +30,12 @@ public class LogServlet extends HttpServlet {
         res.setContentType("application/json");
         JSONObject responseObj = null;
 
-        if (consumerType.equals("HISTORY")) {
-            responseObj = ConsumerRegistry.getInstance().getConsumerJsons(ConsumerType.HISTORY_CONSUMER);
-        }
+        responseObj = ConsumerRegistry.getInstance().getConsumerJson(consumerType);
 
-        PrintWriter out = res.getWriter();
-        out.print(responseObj);
-        out.flush();
+        if (responseObj != null) {
+            PrintWriter out = res.getWriter();
+            out.print(responseObj);
+            out.flush();
+        }
     }
 }
