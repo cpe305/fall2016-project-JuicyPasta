@@ -12,7 +12,7 @@ public class SMTPService extends Service {
         super.setServiceName("SMTPService");
     }
 
-    public String hostname = ":org.honeypot.com:";
+    private String hostname = ":org.honeypot.com:";
 
     @Override
     public String getPreamble() {
@@ -29,7 +29,7 @@ public class SMTPService extends Service {
         switch (command[0]) {
             case "HELO":
                 if (command.length > 1) {
-                    // clientHostname = command[1];
+                    super.getLog().addProperty("client host name", command[1]);
                     return "250 Hello " + command[1];
                 } else {
                     return null;

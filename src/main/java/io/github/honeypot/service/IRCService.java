@@ -7,12 +7,6 @@ import io.github.honeypot.logger.LogType;
  * Created by jackson on 10/10/16.
  */
 public class IRCService extends Service {
-    private String name;
-    private String password;
-    private String nick;
-    private String channel;
-    private String key;
-
     public IRCService() {
         super.setServiceName("IRCService");
     }
@@ -34,24 +28,24 @@ public class IRCService extends Service {
         switch (command[0]) {
             case "PASS":
                 if (command.length > 1)
-                    password = command[1];
+                    super.getLog().addProperty("password", command[1]);
                 return null;
 
             case "NICK":
                 if (command.length > 1)
-                    nick = command[1];
+                    super.getLog().addProperty("nick", command[1]);
                 return null;
 
             case "USER":
                 if (command.length > 1)
-                    name = command[1];
+                    super.getLog().addProperty("name", command[1]);
                 return null;
 
             case "JOIN":
                 if (command.length > 1)
-                    channel = command[1];
+                    super.getLog().addProperty("key", command[1]);
                 if (command.length > 2)
-                    key = command[2];
+                    super.getLog().addProperty("channel", command[2]);
 
                 return null;
 
@@ -66,7 +60,7 @@ public class IRCService extends Service {
         }
     }
 
-    public String notRegistered(String msg) {
+    private String notRegistered(String msg) {
         return hostname + " 451 " + msg + ":You have not registered";
     }
 }

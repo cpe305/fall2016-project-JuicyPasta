@@ -2,26 +2,23 @@ package io.github.honeypot;
 
 import io.github.honeypot.exception.HoneypotException;
 import io.github.honeypot.exception.HoneypotRuntimeException;
-import io.github.honeypot.listener.PersistanceListener;
+import io.github.honeypot.listener.PersistenceListener;
 import io.github.honeypot.listener.SSHListener;
 import io.github.honeypot.listener.TCPListener;
 import io.github.honeypot.logger.*;
 import io.github.honeypot.service.HTTPService;
 import io.github.honeypot.service.IRCService;
 import io.github.honeypot.service.SMTPService;
-import org.mockito.internal.debugging.LoggingListener;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import static io.github.honeypot.Constants.Constants.LOG_HISTORY;
+
 public class App implements ServletContextListener {
-    public static final int LOG_HISTORY = 1000;
     private TCPListener tcpListener;
     private Thread tcpListenerThread;
 
@@ -29,7 +26,7 @@ public class App implements ServletContextListener {
     private Thread sshListenerThread;
 
     HistoryLogConsumer allConsumer;
-    PersistanceListener persistenceObservable;
+    PersistenceListener persistenceObservable;
 
     public App() throws HoneypotException {
         try {
@@ -37,31 +34,25 @@ public class App implements ServletContextListener {
             /**
              * Initialize LogConsumers
              */
-            PersistenceLogConsumer persistentConsumer = null;
-            try {
-                persistentConsumer = new PersistenceLogConsumer("Persistent consumer");
-            } catch (IOException e) {
-                throw new HoneypotException(e);
-            }
+            PersistenceLogReader persistentConsumer = new PersistenceLogReader();
             persistentConsumer.setAcceptAll();
 
-            allConsumer = new HistoryLogConsumer("ALL", LOG_HISTORY * 10);
+            allConsumer = new HistoryLogConsumer(LOG_HISTORY * 10);
             allConsumer.setAcceptAll();
 
-            LogConsumer httpConsumer = new HistoryLogConsumer("HTTP", LOG_HISTORY);
+            LogConsumer httpConsumer = new HistoryLogConsumer(LOG_HISTORY);
             httpConsumer.addAcceptableType(LogType.HTTP_EVENT);
 
-            LogConsumer smtpConsumer = new HistoryLogConsumer("SMTP", LOG_HISTORY);
+            LogConsumer smtpConsumer = new HistoryLogConsumer(LOG_HISTORY);
             smtpConsumer.addAcceptableType(LogType.SMTP_EVENT);
 
-            LogConsumer ircConsumer = new HistoryLogConsumer("IRC", LOG_HISTORY);
-
+            LogConsumer ircConsumer = new HistoryLogConsumer(LOG_HISTORY);
             ircConsumer.addAcceptableType(LogType.IRC_EVENT);
 
-            LogConsumer sshConsumer = new HistoryLogConsumer("SSH", LOG_HISTORY);
+            LogConsumer sshConsumer = new HistoryLogConsumer(LOG_HISTORY);
             sshConsumer.addAcceptableType(LogType.SSH_EVENT);
 
-            LogConsumer topCountries = new RankedAttributeConsumer("TOP_COUNTRIES", "country");
+            LogConsumer topCountries = new RankedAttributeConsumer("country");
             topCountries.setAcceptAll();
 
             /**
@@ -78,7 +69,7 @@ public class App implements ServletContextListener {
             /**
              * Initialize Listeners
              */
-            persistenceObservable = new PersistanceListener();
+            persistenceObservable = new PersistenceListener();
 
             tcpListener = new TCPListener();
             tcpListener.addService(16667, IRCService::new, ()->new Log(LogType.IRC_EVENT));
@@ -112,7 +103,7 @@ public class App implements ServletContextListener {
 
         // Load old log files
         try {
-            PersistenceLogConsumer.reloadLogs(persistenceObservable::makeChange);
+            persistenceObservable.reloadLogs();
         } catch (IOException e) {
             throw new HoneypotRuntimeException(e);
         }

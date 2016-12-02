@@ -12,11 +12,11 @@ import java.util.Observable;
 public class RankedAttributeConsumer extends LogConsumer {
     private String attrToRank;
     private HashMap<Object, Integer> ranking;
-
-    public RankedAttributeConsumer(String name, String attrToRank) {
-        super(name);
+    private int logCount;
+    public RankedAttributeConsumer(String attrToRank) {
         this.attrToRank = attrToRank;
         this.ranking = new HashMap<>();
+        this.logCount = 0;
     }
 
     @Override
@@ -24,6 +24,7 @@ public class RankedAttributeConsumer extends LogConsumer {
         if (data instanceof Log) {
             Log log = (Log) data;
             if (super.shouldLog(log.type)) {
+                logCount++;
                 Object attributeValue = log.getProperty(attrToRank);
                 if (attributeValue != null) {
                     synchronized (ranking) {
@@ -38,13 +39,12 @@ public class RankedAttributeConsumer extends LogConsumer {
         }
     }
 
-    @Override
-    public JSONArray toJson() {
-        return new JSONArray().put(new JSONObject(ranking));
+    public int getLogCount() {
+        return logCount;
     }
 
     @Override
-    public ConsumerType getType() {
-        return ConsumerType.ATTRIBUTE_CONSUMER;
+    public JSONArray toJson() {
+        return new JSONArray().put(new JSONObject(ranking));
     }
 }

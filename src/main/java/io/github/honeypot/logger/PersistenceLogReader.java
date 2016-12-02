@@ -1,5 +1,6 @@
 package io.github.honeypot.logger;
 
+import io.github.honeypot.Constants.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,14 +14,13 @@ import java.util.function.Consumer;
 /**
  * Created by jackson on 11/30/16.
  */
-public class PersistenceLogConsumer extends LogConsumer {
-    private static final String LOG_FOLDER = "/var/log/honeypot/";
+public class PersistenceLogReader extends LogConsumer {
     private static DateFormat fileSuffix = new SimpleDateFormat("yyyy-MM-dd");
 
     private String outputWriterString;
     private FileWriter outputWriter;
-    public PersistenceLogConsumer(String name) throws IOException {
-        super(name);
+
+    public PersistenceLogReader() throws IOException {
         updateOutputWriter();
     }
 
@@ -41,7 +41,7 @@ public class PersistenceLogConsumer extends LogConsumer {
     }
 
     public void updateOutputWriter() throws IOException{
-        String currentFile = LOG_FOLDER + "honeypot." + fileSuffix.format(new Date()) + ".out";
+        String currentFile = Constants.LOG_FOLDER + "honeypot." + fileSuffix.format(new Date()) + ".out";
         if (outputWriter == null || outputWriterString == null || !outputWriterString.equals(currentFile)) {
             if (outputWriter != null) {
                 outputWriter.flush();
@@ -53,24 +53,8 @@ public class PersistenceLogConsumer extends LogConsumer {
         }
     }
 
-    public static void reloadLogs(Consumer consumer) throws IOException {
-        File logFolder = new File(LOG_FOLDER);
-
-        for (File fileEntry : logFolder.listFiles()) {
-            if (fileEntry.isFile() && fileEntry.toString().endsWith(".out")) {
-                BufferedReader reader = new BufferedReader(new FileReader(fileEntry));
-                reader.lines().map((str)->new Log(new JSONObject(str))).forEachOrdered(consumer);
-            }
-        }
-    }
-
     @Override
     public JSONArray toJson() {
-        return null;
-    }
-
-    @Override
-    public ConsumerType getType() {
         return null;
     }
 }

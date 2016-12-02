@@ -11,16 +11,10 @@ import java.util.TreeSet;
 public abstract class LogConsumer implements Observer {
     private TreeSet<LogType> acceptableTypes;
     private boolean acceptAll;
-    private String name;
 
-    LogConsumer(String name) {
+    LogConsumer() {
         this.acceptableTypes = new TreeSet<>();
-        this.name = name;
         this.acceptAll = false;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public void setAcceptAll() {
@@ -36,6 +30,4 @@ public abstract class LogConsumer implements Observer {
     }
 
     public abstract JSONArray toJson();
-
-    public abstract ConsumerType getType();
 }

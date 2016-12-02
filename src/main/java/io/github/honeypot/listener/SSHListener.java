@@ -70,8 +70,7 @@ public class SSHListener extends Listener {
 
         passwordAttemptLog.end();
 
-        setChanged();
-        notifyObservers(passwordAttemptLog);
+        triggerObserver(passwordAttemptLog);
 
         return false;
     }
@@ -92,10 +91,14 @@ public class SSHListener extends Listener {
 
         pubkeyAttemptLog.end();
 
-        setChanged();
-        notifyObservers(pubkeyAttemptLog);
+        triggerObserver(pubkeyAttemptLog);
 
         return false;
+    }
+
+    public void triggerObserver(Log o) {
+        setChanged();
+        notifyObservers(o);
     }
 
     private static class ShellFactory extends InteractiveProcessShellFactory {

@@ -13,8 +13,7 @@ public class HistoryLogConsumer extends LogConsumer {
     private int listLength;
     public JSONArray recentEvents;
 
-    public HistoryLogConsumer(String name, int length) {
-        super(name);
+    public HistoryLogConsumer(int length) {
         recentEvents = new JSONArray();
         this.listLength = length;
     }
@@ -38,14 +37,8 @@ public class HistoryLogConsumer extends LogConsumer {
         }
     }
 
-
     @Override
     public JSONArray toJson() {
         return recentEvents;
-    }
-
-    @Override
-    public ConsumerType getType() {
-        return ConsumerType.HISTORY_CONSUMER;
     }
 }

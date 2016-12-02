@@ -1,5 +1,5 @@
-body{
-background-color:white;
+body {
+    background-color: white;
 }
 
 .title {
@@ -7,14 +7,16 @@ background-color:white;
     padding: 12px;
     width: 100%;
     background-color: #b4ad2e;
-    box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2),0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12);
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
 }
+
 .title > h3 {
     margin: 0px;
     margin-left: 5px;
     color: white;
-    display:inline;
+    display: inline;
 }
+
 .title > h4 {
     display: inline;
     float: right;
@@ -26,6 +28,7 @@ background-color:white;
     padding: 0px;
     margin: 0px;
 }
+
 .container-fluid {
     padding-left: 15px;
     min-width: 1000px;
@@ -33,10 +36,12 @@ background-color:white;
     overflow: scroll;
 
 }
+
 .chart {
     padding: 5px;
     background-color: #EEEEEE;
 }
+
 .chart div {
     font: 10px sans-serif;
     background-color: steelblue;
@@ -54,8 +59,8 @@ background-color:white;
 .card {
     margin-left: 10px;
     margin-top: 10px;
-border-radius: 2px;
-box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2),0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12);
+    border-radius: 2px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
     border: 1px solid #bdbdbd;
     padding: 0px;
 }
@@ -64,56 +69,61 @@ box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2),0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -
     height: 70%;
     border: none;
 }
-.map > div{
+
+.map > div {
     border-radius: 1px;
 }
 
 .buttons {
-display: flex;
-flex-wrap: wrap;
-justify-content: space-around;
-padding: 10px;
-margin:5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 10px;
+    margin: 5px;
 }
 
 .info {
-position:relative;
+    position: relative;
     width: 340px;
 }
 
 .card > h4 {
-text-align:center;
+    text-align: center;
 }
 
 .log-area {
-position: relative;
-overflow-y: scroll;
+    position: relative;
+    overflow-y: scroll;
 }
 
 .logTabs {
-    align:center;
+    align: center;
 }
+
 .logTabs > li > a {
     border-radius: 1px;
 }
+
 .log-list {
-list-style: none;
-margin: 0px;
-padding: 0px;
-width: 100%;
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
     max-height: 500px;
 }
 
 .log-list > li {
     padding: 5px;
 }
+
 .log-list > li:not(:last-child) {
     border-bottom: 1px solid #bdbdbd;
 }
+
 .log-list > li:hover {
     background-color: #ebebeb;
 }
 
 .hidden {
-    display:none;
+    display: none;
 }
