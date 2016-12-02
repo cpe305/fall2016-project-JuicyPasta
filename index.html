@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Fall2016-project-juicypasta by cpe305</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Fall2016-project-juicypasta</h1>
+          <h2>honeypot.jacksondarrow.com</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/cpe305/fall2016-project-JuicyPasta/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/cpe305/fall2016-project-JuicyPasta/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/cpe305/fall2016-project-JuicyPasta" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="network-honeypot" class="anchor" href="#network-honeypot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Network Honeypot</h1>
+
+<p>CPE-305 final project</p>
+
+<p><a href="https://travis-ci.org/cpe305/fall2016-project-JuicyPasta"><img src="https://travis-ci.org/cpe305/fall2016-project-JuicyPasta.svg?branch=master" alt="Build Status"></a></p>
+
+<h3>
+<a id="live-website" class="anchor" href="#live-website" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="http://honeypot.jacksondarrow.com:8888/honeypot-1.0">live website</a>
+</h3>
+
+<h2>
+<a id="goals" class="anchor" href="#goals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Goals</h2>
+
+<ul>
+<li>Connect with random hosts on the internet and log the important details of the interaction. </li>
+<li>Gain insight about the location and behaviors of these hosts (presumed to be bots)</li>
+<li>Design the software in a way that is mindful of archetectural and design principals learned in CPE-305</li>
+</ul>
+
+<h2>
+<a id="design" class="anchor" href="#design" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design</h2>
+
+<h3>
+<a id="uml-class-diagram" class="anchor" href="#uml-class-diagram" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Uml Class Diagram</h3>
+
+<p><img src="https://raw.githubusercontent.com/cpe305/fall2016-project-JuicyPasta/master/docs/Honeypot_Class_Diagram.svg" alt=""></p>
+
+<h3>
+<a id="two-components-bridged-with-the-observer-pattern" class="anchor" href="#two-components-bridged-with-the-observer-pattern" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Two Components Bridged With the Observer Pattern</h3>
+
+<h5>
+<a id="log-gathering-component---observable" class="anchor" href="#log-gathering-component---observable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Log Gathering Component - Observable</h5>
+
+<p>The log gathering component is broken up into a number of subdivisions that are subclasses of "Listener". These subdivisions are in charge of accepting connections and logging interactions. When the listener determines that the interaction is over, it lets all of its observers know about the log with following.</p>
+
+<div class="highlight highlight-source-java"><pre>setChanged();
+notifyObservers(log);</pre></div>
+
+<h5>
+<a id="log-processing-component---observer" class="anchor" href="#log-processing-component---observer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Log Processing Component - Observer</h5>
+
+<p>The log processing component does a lot of the heavy lifting. It is designed in a way that allows for different types of LogConsumers to define the way they aggregate data as logs flow through them. LogConsumers also are able to select what type of logs they are willing to process. Ideally I would have made logs contain a list of "tags" that consumers would be able to accept but I did not have the time to refactor this change. </p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-c">// Creating a new LogConsumer that keeps track of which countries produce the most http events (country is a property that gets added to the log object, second argument can be any property)</span>
+<span class="pl-smi">LogConsumer</span> httpRankedByCountry <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">RankedAttributeConsumer</span>(<span class="pl-s"><span class="pl-pds">"</span>Top HTTP countries<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>country<span class="pl-pds">"</span></span>);
+httpRankedByCountry<span class="pl-k">.</span>addAcceptableType(<span class="pl-smi">LogType</span><span class="pl-c1"><span class="pl-k">.</span>HTTP_EVENT</span>);
+
+<span class="pl-c">// Creating a new TCPListener that listens on port 10080 (unprivelaged), new connections will be handled by HTTPService and produces HTTP_EVENT type logs</span>
+tcpListener <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">TCPListener</span>();
+tcpListener<span class="pl-k">.</span>addService(<span class="pl-c1">10080</span>, <span class="pl-smi">HTTPService</span><span class="pl-k">::</span><span class="pl-k">new</span>, ()<span class="pl-k">-</span><span class="pl-k">&gt;</span><span class="pl-k">new</span> <span class="pl-smi">Log</span>(<span class="pl-smi">LogType</span><span class="pl-c1"><span class="pl-k">.</span>HTTP_EVENT</span>));
+
+<span class="pl-c">// Start observing logs</span>
+tcpListener<span class="pl-k">.</span>addObserver(httpRankedByCountry);</pre></div>
+
+<h3>
+<a id="factory-method-pattern" class="anchor" href="#factory-method-pattern" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>factory method pattern</h3>
+
+<p>Factory methods are used to create logs and services, simply subclass one of the log factories using java 8 lambdas</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-c">// LogFactory.java</span>
+<span class="pl-k">@FunctionalInterface</span>
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">LogFactory</span>&lt;T <span class="pl-k">extends</span> <span class="pl-e">Log</span>&gt; {
+    <span class="pl-smi">T</span> <span class="pl-en">create</span>();
+}
+<span class="pl-c1">...</span>
+<span class="pl-c">//ServiceFactory.java</span>
+<span class="pl-k">@FunctionalInterface</span>
+<span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">ServiceFactory</span>&lt;T <span class="pl-k">extends</span> <span class="pl-e">Service</span>&gt; {
+    <span class="pl-smi">T</span> <span class="pl-en">create</span>();
+}</pre></div>
+
+<h3>
+<a id="singleton-pattern" class="anchor" href="#singleton-pattern" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>singleton pattern</h3>
+
+<p>The ConsumerRegistry uses the singleton pattern so that it can be accessed by the servlets and main class</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-smi">ConsumerRegistry</span> <span class="pl-c1">INSTANCE</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">ConsumerRegistry</span>();
+<span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-smi">ConsumerRegistry</span> getInstance() {
+    <span class="pl-k">return</span> <span class="pl-c1">INSTANCE</span>;
+}</pre></div>
+
+<h3>
+<a id="template-pattern---adding-new-service-state-machines" class="anchor" href="#template-pattern---adding-new-service-state-machines" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>template pattern - adding new service state machines</h3>
+
+<p>This is the bread and butter of how the honeypot is able to extract information. The template class is the "Service" class. This pattern lets me define how I want the different services to behave and log information. The following example shows an HTTPService that redirects the user and logs the length of their payload. A more extensive example would have been a state machine that displays a username and password box that tempts bots into guessing credential pairs. </p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">HTTPService</span> <span class="pl-k">extends</span> <span class="pl-e">Service</span> {
+    <span class="pl-c">// Client talks first in HTTP</span>
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">getPreamble</span>() {
+        <span class="pl-k">return</span> <span class="pl-c1">null</span>;
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">feed</span>(<span class="pl-smi">String</span> <span class="pl-v">input</span>) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>getLog()<span class="pl-k">.</span>addProperty(<span class="pl-s"><span class="pl-pds">"</span>content-length<span class="pl-pds">"</span></span>, <span class="pl-smi">String</span><span class="pl-k">.</span>valueOf(input<span class="pl-k">.</span>length()));
+
+        <span class="pl-smi">String</span> toRet <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>HTTP/1.1 302 Found<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>Location: https://www.google.com<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>Content-Type: text/html; charset=UTF-8<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>content-length:226<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>Accept-Encoding: gzip, deflate, sdch, br<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> <span class="pl-k">+</span>
+                <span class="pl-s"><span class="pl-pds">"</span>Accept-Language: en-US,en;q=0.8<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;
+
+        <span class="pl-k">return</span> toRet;
+    }
+}</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h5>
+<a id="method-1---using-the-maven-tomcat-plugin" class="anchor" href="#method-1---using-the-maven-tomcat-plugin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Method 1 - Using the Maven Tomcat Plugin</h5>
+
+<pre><code># clone the repository
+git clone https://github.com/cpe305/fall2016-project-JuicyPasta
+cd fall2016-project-JuicyPasta
+mvn clean install compile tomcat7:run
+</code></pre>
+
+<h5>
+<a id="method-2---using-the-apache-tomcat8-container" class="anchor" href="#method-2---using-the-apache-tomcat8-container" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Method 2 - Using the Apache Tomcat(8+) Container</h5>
+
+<pre><code># Install Apache Tomcat 8 
+git clone https://github.com/cpe305/fall2016-project-JuicyPasta
+cd fall2016-project-JuicyPasta
+mvn clean install compile war:war
+# upload /target/honeypot-1.0.war to the Apache host-manager
+</code></pre>
+
+<h5>
+<a id="configuring-the-network" class="anchor" href="#configuring-the-network" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuring the network</h5>
+
+<p>In order to setup the Tomcat server in the most secure way possible, we must run all of the honeypot listeners on unprivelaged ports. After you get all of that working, use port forwarding or iptables to proxy the desired service ports to the honeypot ports making sure no NAT is performed. </p>
+        </section>
+
+        <footer>
+          Fall2016-project-juicypasta is maintained by <a href="https://github.com/cpe305">cpe305</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
