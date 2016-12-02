@@ -1,5 +1,7 @@
 package io.github.honeypot;
 
+import io.github.honeypot.connection.Connection;
+import io.github.honeypot.connection.TCPConnection;
 import io.github.honeypot.listener.PersistenceListener;
 import io.github.honeypot.listener.SSHListener;
 import io.github.honeypot.logger.HistoryLogConsumer;
@@ -9,10 +11,18 @@ import io.github.honeypot.logger.RankedAttributeConsumer;
 import io.github.honeypot.service.HTTPService;
 import io.github.honeypot.service.IRCService;
 import io.github.honeypot.service.SMTPService;
+import io.github.honeypot.service.Service;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.mockito.Mockito;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
 
@@ -92,4 +102,33 @@ public class AppTest extends TestCase {
 
         assert(testConsumer.getLogCount() == 1);
     }
+
+    public void testConnection() throws Exception {
+        Service mockService = spy(new HTTPService());
+        mockService.attachLog(new Log(LogType.HTTP_EVENT));
+
+        Socket mockSocket = mock(Socket.class);
+        BufferedReader mockReader = mock(BufferedReader.class);
+        PrintWriter mockWriter = mock(PrintWriter.class);
+        Log log = mock(Log.class);
+        Consumer<Object> mockCallable = mock(Consumer.class);
+
+        when(mockReader.readLine()).thenReturn("<line>", "<second-line>", null);
+        when(mockService.getPreamble()).thenReturn("<preamble>");
+        when(mockService.feed(anyString())).thenReturn("<response>");
+
+        Connection conn = new TCPConnection(mockService, mockSocket, mockReader, mockWriter, log, mockCallable);
+        conn.run();
+
+        verify(mockWriter).println(eq("<preamble>"));
+
+        verify(mockWriter).close();
+        verify(mockReader).close();
+        verify(mockSocket).shutdownInput();
+        verify(mockSocket).shutdownOutput();
+        verify(mockSocket).close();
+
+    }
+
+    
 }

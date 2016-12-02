@@ -1,6 +1,6 @@
 package io.github.honeypot.logger;
 
-import io.github.honeypot.Constants.Constants;
+import io.github.honeypot.constants.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,7 +9,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
-import java.util.function.Consumer;
 
 /**
  * Created by jackson on 11/30/16.

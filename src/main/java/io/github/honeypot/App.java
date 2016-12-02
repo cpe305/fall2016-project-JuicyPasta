@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import static io.github.honeypot.Constants.Constants.LOG_HISTORY;
+import static io.github.honeypot.constants.Constants.LOG_HISTORY;
 
 public class App implements ServletContextListener {
     private TCPListener tcpListener;

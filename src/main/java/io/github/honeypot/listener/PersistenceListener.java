@@ -8,9 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Observable;
-import java.util.function.Consumer;
 
-import static io.github.honeypot.Constants.Constants.LOG_FOLDER;
+import static io.github.honeypot.constants.Constants.LOG_FOLDER;
 
 /**
  * Created by jackson on 11/30/16.

@@ -1,4 +1,4 @@
-package io.github.honeypot.Constants;
+package io.github.honeypot.constants;
 
 /**
  * Created by jackson on 12/2/16.
