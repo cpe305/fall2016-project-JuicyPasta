@@ -2,6 +2,7 @@ package io.github.honeypot.logger;
 
 import org.json.JSONArray;
 
+import java.util.HashSet;
 import java.util.Observer;
 import java.util.TreeSet;
 
@@ -9,11 +10,10 @@ import java.util.TreeSet;
  * Created by jackson on 11/29/16.
  */
 public abstract class LogConsumer implements Observer {
-    private TreeSet<LogType> acceptableTypes;
+    private final HashSet<LogType> acceptableTypes = new HashSet<>();
     private boolean acceptAll;
 
     LogConsumer() {
-        this.acceptableTypes = new TreeSet<>();
         this.acceptAll = false;
     }
 

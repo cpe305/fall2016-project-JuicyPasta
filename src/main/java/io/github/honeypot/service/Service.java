@@ -8,10 +8,9 @@ import io.github.honeypot.logger.Log;
 public abstract class Service {
     private String serviceName;
     private boolean alive;
+    private Log log;
 
-    Log log;
-
-    public Service() {
+    Service() {
         this.alive = true;
     }
     public void attachLog(Log log) {
@@ -20,7 +19,7 @@ public abstract class Service {
     public Log getLog() {
         return this.log;
     }
-    public void setServiceName(String serviceName) {
+    void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
     public String getServiceName() {
@@ -31,7 +30,7 @@ public abstract class Service {
         return alive;
     }
 
-    public void kill() {
+    void kill() {
         this.alive = false;
     }
 

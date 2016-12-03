@@ -23,7 +23,7 @@ public class RankedAttributeConsumer extends LogConsumer {
     public void update(Observable subject, Object data) {
         if (data instanceof Log) {
             Log log = (Log) data;
-            if (super.shouldLog(log.type)) {
+            if (super.shouldLog(log.getType())) {
                 logCount++;
                 Object attributeValue = log.getProperty(attrToRank);
                 if (attributeValue != null) {

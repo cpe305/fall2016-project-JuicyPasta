@@ -28,7 +28,7 @@ public class ConsumerRegistry {
         return null;
     }
 
-    private static ConsumerRegistry INSTANCE = new ConsumerRegistry();
+    private static final ConsumerRegistry INSTANCE = new ConsumerRegistry();
     public static ConsumerRegistry getInstance() {
         return INSTANCE;
     }

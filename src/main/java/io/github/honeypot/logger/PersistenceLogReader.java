@@ -1,6 +1,7 @@
 package io.github.honeypot.logger;
 
 import io.github.honeypot.constants.Constants;
+import io.github.honeypot.exception.HoneypotRuntimeException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,11 +20,13 @@ public class PersistenceLogReader extends LogConsumer {
     private String outputWriterString;
     private FileWriter outputWriter;
 
-    public PersistenceLogReader() throws IOException {
-    }
-
     @Override
     public void update(Observable observable, Object obj) {
+        try {
+            updateOutputWriter();
+        } catch (IOException e) {
+            throw new HoneypotRuntimeException(e);
+        }
         if (obj instanceof Log) {
             Log log = (Log)obj;
             JSONObject json = log.toJson();
@@ -33,12 +36,12 @@ public class PersistenceLogReader extends LogConsumer {
                 outputWriter.write('\n');
                 outputWriter.flush();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new HoneypotRuntimeException(e);
             }
         }
     }
 
-    public void updateOutputWriter() throws IOException{
+    public void updateOutputWriter() throws IOException {
         String currentFile = Constants.LOG_FOLDER + "honeypot." + fileSuffix.format(new Date()) + ".out";
         if (outputWriter == null || outputWriterString == null || !outputWriterString.equals(currentFile)) {
             if (outputWriter != null) {

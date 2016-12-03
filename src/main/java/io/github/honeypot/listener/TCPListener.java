@@ -21,14 +21,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static io.github.honeypot.constants.Constants.POOLSIZE;
+
 /**
  * Created by jackson on 10/2/16.
  */
 public class TCPListener extends Listener {
-    private static final int POOLSIZE = 10;
-    private ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(POOLSIZE);
 
-    private Selector selector = Selector.open();
+    private final Selector selector = Selector.open();
     private ServerSocketChannel serverChannel;
     private boolean isRunning = true;
 

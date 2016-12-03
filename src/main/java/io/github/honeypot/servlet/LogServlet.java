@@ -1,7 +1,6 @@
 package io.github.honeypot.servlet;
 
 import io.github.honeypot.logger.ConsumerRegistry;
-import io.github.honeypot.logger.ConsumerType;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -24,9 +23,8 @@ public class LogServlet extends HttpServlet {
             String consumerType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
 
             res.setContentType("application/json");
-            JSONObject responseObj = null;
 
-            responseObj = ConsumerRegistry.getInstance().getConsumerJson(consumerType);
+            JSONObject responseObj = ConsumerRegistry.getInstance().getConsumerJson(consumerType);
 
             if (responseObj != null) {
                 PrintWriter out = res.getWriter();

@@ -11,10 +11,9 @@ import java.util.Observable;
  */
 public class HistoryLogConsumer extends LogConsumer {
     private int listLength;
-    public JSONArray recentEvents;
+    private final JSONArray recentEvents = new JSONArray();
 
     public HistoryLogConsumer(int length) {
-        recentEvents = new JSONArray();
         this.listLength = length;
     }
 
@@ -22,7 +21,7 @@ public class HistoryLogConsumer extends LogConsumer {
     public void update(Observable subject, Object data) {
         if (data instanceof Log) {
             Log log = (Log) data;
-            if (super.shouldLog(log.type)) {
+            if (super.shouldLog(log.getType())) {
                 synchronized (recentEvents) {
 
                     recentEvents.put(log.toJson());
@@ -35,6 +34,10 @@ public class HistoryLogConsumer extends LogConsumer {
         } else {
             throw new HoneypotRuntimeException("Observed something that is not a log");
         }
+    }
+
+    public JSONArray getRecentEvents() {
+        return this.recentEvents;
     }
 
     @Override

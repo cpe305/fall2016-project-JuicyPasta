@@ -68,17 +68,17 @@ public class AppTest {
         Log mockLog = Mockito.mock(Log.class);
         when(mockLog.toJson()).thenReturn(null);
 
-        mockLog.type = LogType.HTTP_EVENT;
+        when(mockLog.getType()).thenReturn(LogType.HTTP_EVENT);
         fakeListener.triggerObserver(mockLog);
-        assert(testConsumer.recentEvents.length() == 1);
+        assert(testConsumer.getRecentEvents().length() == 1);
 
-        mockLog.type = LogType.IRC_EVENT;
+        when(mockLog.getType()).thenReturn(LogType.IRC_EVENT);
         fakeListener.triggerObserver(mockLog);
-        assert(testConsumer.recentEvents.length() == 1);
+        assert(testConsumer.getRecentEvents().length() == 1);
 
         testConsumer.setAcceptAll();
         fakeListener.triggerObserver(mockLog);
-        assert(testConsumer.recentEvents.length() == 2);
+        assert(testConsumer.getRecentEvents().length() == 2);
     }
 
     @Test
@@ -131,10 +131,5 @@ public class AppTest {
         verify(mockSocket).shutdownOutput();
         verify(mockSocket).close();
 
-    }
-
-    @Test()
-    public void testAppNoException() throws Exception {
-        App app = new App();
     }
 }

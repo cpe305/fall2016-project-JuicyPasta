@@ -51,9 +51,7 @@ public class IRCService extends Service {
 
             case "DIE":
                 super.kill();
-
-            case "PING":
-            case "PONG":
+                return "";
 
             default:
                 return notRegistered(command[0]);

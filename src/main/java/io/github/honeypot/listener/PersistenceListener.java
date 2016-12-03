@@ -23,17 +23,17 @@ public class PersistenceListener extends Observable {
     }
 
     public void reloadLogs(String logFolderString) throws IOException {
-        try {
             File logFolder = new File(logFolderString);
             for (File fileEntry : logFolder.listFiles()) {
                 if (fileEntry.isFile() && fileEntry.toString().endsWith(".out")) {
-                    BufferedReader reader = new BufferedReader(new FileReader(fileEntry));
-                    reader.lines().map((str) -> new Log(new JSONObject(str))).forEachOrdered((log) -> makeChange(log));
+                    try (FileReader fileReader = new FileReader(fileEntry)) {
+                        BufferedReader reader = new BufferedReader(fileReader);
+                        reader.lines().map((str) -> new Log(new JSONObject(str))).forEachOrdered((log) -> makeChange(log));
+                    } catch (JSONException e) {
+                        throw new IOException(e);
+                    }
                 }
             }
-        } catch (JSONException e) {
-            throw new IOException(e);
-        }
     }
     public void reloadLogs() throws IOException {
         reloadLogs(LOG_FOLDER);

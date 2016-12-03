@@ -24,7 +24,7 @@ import java.util.Map;
 
 // TODO: refactor this so that there is a list of LogType 'tags' and move all of the other attributes into properties
 public class Log implements Serializable {
-    public LogType type;
+    private LogType type;
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -96,7 +96,9 @@ public class Log implements Serializable {
             properties.put(key, obj.getString(key));
         }
     }
-
+    public LogType getType() {
+        return this.type;
+    }
     public void setDescription(String desc) {
         this.description = desc;
     }
