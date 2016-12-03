@@ -137,6 +137,4 @@ public class AppTest {
     public void testAppNoException() throws Exception {
         App app = new App();
     }
-
-
 }

@@ -20,7 +20,6 @@ public class PersistenceLogReader extends LogConsumer {
     private FileWriter outputWriter;
 
     public PersistenceLogReader() throws IOException {
-        updateOutputWriter();
     }
 
     @Override

@@ -25,8 +25,8 @@ public class App implements ServletContextListener {
     private SSHListener sshListener;
     private Thread sshListenerThread;
 
-    HistoryLogConsumer allConsumer;
-    PersistenceListener persistenceObservable;
+    private HistoryLogConsumer allConsumer;
+    private PersistenceListener persistenceObservable;
 
     public App() throws HoneypotException {
         try {
