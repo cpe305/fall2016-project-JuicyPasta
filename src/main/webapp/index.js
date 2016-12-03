@@ -5,13 +5,12 @@ $(document).ready(function () {
         addTab(key)
     })
 
-
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/TOP_COUNTRIES' : '/log/TOP_COUNTRIES'
-    $.get(logpath, function (logObj) {
+    makeAjax("/log/TOP_COUNTRIES", function (logObj) {
         console.log(logObj)
         setMetadata(logObj["TOP_COUNTRIES"][0])
     })
 })
+
 
 function setMetadata(metadata) {
     var data = []
@@ -27,7 +26,6 @@ function setMetadata(metadata) {
         nums.push(obj.value)
     })
 
-
     d3.select(".chart").selectAll("div")
         .data(data)
         .enter()
@@ -38,7 +36,11 @@ function setMetadata(metadata) {
         .text(function (d) {
             return d.key + ": " + d.value
         })
+}
 
+function makeAjax(path, callback) {
+    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/' + path : path
+    $.get(logpath, callback)
 }
 
 function addTab(name) {

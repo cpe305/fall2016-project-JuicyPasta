@@ -20,22 +20,22 @@ public class LogServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String consumerType = null;
         try {
-            consumerType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
+            String consumerType = URLDecoder.decode(req.getPathInfo().substring(1), "UTF-8");
+
+            res.setContentType("application/json");
+            JSONObject responseObj = null;
+
+            responseObj = ConsumerRegistry.getInstance().getConsumerJson(consumerType);
+
+            if (responseObj != null) {
+                PrintWriter out = res.getWriter();
+                out.print(responseObj);
+                out.flush();
+
+            }
         } catch (Exception e) {
             System.err.println(e);
-        }
-
-        res.setContentType("application/json");
-        JSONObject responseObj = null;
-
-        responseObj = ConsumerRegistry.getInstance().getConsumerJson(consumerType);
-
-        if (responseObj != null) {
-            PrintWriter out = res.getWriter();
-            out.print(responseObj);
-            out.flush();
         }
     }
 }

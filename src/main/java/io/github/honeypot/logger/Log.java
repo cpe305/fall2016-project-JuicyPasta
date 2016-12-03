@@ -33,7 +33,7 @@ public class Log implements Serializable {
     private int remotePort;
     private List<String> conversation;
     private Map<String, String> properties;
-    private static final long serialVersionUID = 9182119070764305069L;
+
     public Log(LogType type) {
         this.type = type;
         this.startTime = LocalDateTime.now();
@@ -140,9 +140,9 @@ public class Log implements Serializable {
         endTime = LocalDateTime.now();
     }
 
-    public static String geoLookupIpTemplate = "http://freegeoip.net/json/{0}";
+    private static final String geoLookupIpTemplate = "http://freegeoip.net/json/{0}";
 
-    public void addLocation() {
+    private void addLocation() {
         try {
             URLConnection conn = new URL(MessageFormat.format(geoLookupIpTemplate, address.getHostAddress())).openConnection();
             JSONTokener tokener = new JSONTokener(conn.getInputStream());
@@ -167,10 +167,10 @@ public class Log implements Serializable {
     @Override
     public String toString() {
         StringBuilder toRet = new StringBuilder();
-        toRet.append("event description: " + description + "\n");
-        toRet.append("start time: " + startTime + "\n");
-        toRet.append("end time: " + endTime + "\n");
-        toRet.append("address  " + address.getHostAddress() + "\n");
+        toRet.append("event description: ").append(description).append("\n");
+        toRet.append("start time: ").append(startTime).append("\n");
+        toRet.append("end time: ").append(endTime).append("\n");
+        toRet.append("address  ").append(address.getHostAddress()).append("\n");
 
         properties.forEach((key, value) -> toRet.append(key + ": " + value + "\n"));
 

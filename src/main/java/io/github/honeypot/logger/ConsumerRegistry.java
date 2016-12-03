@@ -11,11 +11,7 @@ import java.util.List;
  * Created by jackson on 11/29/16.
  */
 public class ConsumerRegistry {
-    public static HashMap<String, LogConsumer> consumersMap;
-
-    public ConsumerRegistry() {
-        this.consumersMap = new HashMap<>();
-    }
+    private static final HashMap<String, LogConsumer> consumersMap = new HashMap<>();
 
     public void addConsumer(String name, LogConsumer consumer) {
         consumersMap.put(name, consumer);
