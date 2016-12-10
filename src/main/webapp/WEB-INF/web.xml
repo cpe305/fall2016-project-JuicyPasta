@@ -7,6 +7,7 @@
 
     <listener>
         <listener-class>io.github.honeypot.App</listener-class>
+        <load-on-startup>2</load-on-startup>
     </listener>
 
     <servlet-mapping>
@@ -15,11 +16,22 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>logger</servlet-name>
-        <servlet-class>io.github.honeypot.servlet.LogServlet</servlet-class>
+        <servlet-name>HistoryServlet</servlet-name>
+        <servlet-class>io.github.honeypot.servlet.HistoryServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>logger</servlet-name>
-        <url-pattern>/log/*</url-pattern>
+        <servlet-name>HistoryServlet</servlet-name>
+        <url-pattern>/HISTORY/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RankServlet</servlet-name>
+        <servlet-class>io.github.honeypot.servlet.RankServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RankServlet</servlet-name>
+        <url-pattern>/RANK/*</url-pattern>
     </servlet-mapping>
 </web-app>

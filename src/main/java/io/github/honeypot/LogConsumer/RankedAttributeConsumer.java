@@ -1,6 +1,7 @@
-package io.github.honeypot.logger;
+package io.github.honeypot.LogConsumer;
 
-import org.json.JSONArray;
+import io.github.honeypot.LogConsumer.LogConsumer;
+import io.github.honeypot.logger.Log;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -39,12 +40,11 @@ public class RankedAttributeConsumer extends LogConsumer {
         }
     }
 
-    public int getLogCount() {
-        return logCount;
+    public JSONObject getScores() {
+        return new JSONObject(ranking);
     }
 
-    @Override
-    public JSONArray toJson() {
-        return new JSONArray().put(new JSONObject(ranking));
+    public int getLogCount() {
+        return logCount;
     }
 }

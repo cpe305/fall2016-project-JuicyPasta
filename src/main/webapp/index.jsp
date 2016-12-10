@@ -1,4 +1,5 @@
-
+<%@ page import="io.github.honeypot.servlet.HistoryServlet.HistoryEnum" %>
+<%@ page import="io.github.honeypot.servlet.RankServlet.RankEnum" %>
 <html>
 <head>
     <title>honeypot</title>
@@ -42,28 +43,42 @@
                 <h4>Logs</h4>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs logTabs" role="tablist">
+                    <%for (HistoryEnum type : HistoryEnum.values()) { %>
+                        <li role="presentation" id="<%=type.name()%>"><a href="#<%= type.name() %>" aria-controls="<%= type.name() %>" role="tab" data-toggle="tab"><%= type.name() %></a></li>
+                    <%}%>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="ALL">
-                        <div class="log-area">
-                            <ul class="log-list">
-                            </ul>
+                    <%for (HistoryEnum type : HistoryEnum.values()) { %>
+                        <div role="tabpanel" class="tab-pane" id="<%=type.name()%>">
+                            <div class="log-area">
+                                <ul class="log-list">
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    <%}%>
+
                 </div>
+
+                <script>
+                    $(".logTabs > .ALL").addClass("active")
+                    $(".tab-content > #ALL").addClass("active")
+                </script>
+
             </div>
         </div>
 
     </div>
     <div class="row">
-        <div class="col-sm-3">
-            <div class="card info">
-                <h4>Top Countries</h4>
-                <div class="chart bordered"></div>
+        <%for (RankEnum type : RankEnum.values()) { %>
+            <div class="col-sm-3 rank" id="<%=type.name() %>">
+                <div class="card info">
+                    <h4><%=type.getName()%></h4>
+                    <div class="chart bordered"></div>
+                </div>
             </div>
-        </div>
+        <%}%>
     </div>
 
 </div>

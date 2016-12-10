@@ -54,7 +54,7 @@ public class SSHListener extends Listener {
         sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
     }
 
-    private boolean passwordAuthenticate(String username, String password, ServerSession session) {
+    public boolean passwordAuthenticate(String username, String password, ServerSession session) {
         int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 
@@ -75,7 +75,7 @@ public class SSHListener extends Listener {
         return false;
     }
 
-    private boolean publicKeyAuthenticate(String username, PublicKey key, ServerSession session) {
+    public boolean publicKeyAuthenticate(String username, PublicKey key, ServerSession session) {
         int remotePort = ((InetSocketAddress) session.getClientAddress()).getPort();
         InetAddress addr = ((InetSocketAddress) session.getClientAddress()).getAddress();
 

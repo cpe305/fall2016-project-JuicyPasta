@@ -1,5 +1,6 @@
-package io.github.honeypot.logger;
+package io.github.honeypot.LogConsumer;
 
+import io.github.honeypot.logger.LogType;
 import org.json.JSONArray;
 
 import java.util.HashSet;
@@ -28,6 +29,4 @@ public abstract class LogConsumer implements Observer {
     boolean shouldLog(LogType type) {
         return acceptAll || acceptableTypes.contains(type);
     }
-
-    public abstract JSONArray toJson();
 }

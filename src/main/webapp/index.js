@@ -1,113 +1,104 @@
 $(document).ready(function () {
-    var logs = ["ALL", "SSH", "HTTP", "SMTP", "IRC"]
-    // tabs and click handlers
-    logs.forEach(function (key) {
-        addTab(key)
+    buildHistory('HISTORY');
+
+    var $logArea = $(".tab-content > #ALL")
+    var url = "HISTORY/ALL"
+    makeAjax(url, function(data) {
+        addLogTabData($logArea, data, url)
+        createMap(parseLogs(data))
     })
 
-    makeAjax("/log/TOP_COUNTRIES", function (logObj) {
-        console.log(logObj)
-        setMetadata(logObj["TOP_COUNTRIES"][0])
-    })
+
+    buildMetadata('RANK');
 })
-
-
-function setMetadata(metadata) {
-    var data = []
-    $.each(metadata, function (key, value) {
-        data.push({key: key, value: value})
-    })
-    data.sort(function (a, b) {
-        return a.value - b.value
-    })
-
-    var nums = []
-    data.forEach(function (obj) {
-        nums.push(obj.value)
-    })
-
-    d3.select(".chart").selectAll("div")
-        .data(data)
-        .enter()
-        .append("div")
-        .style("width", function (d) {
-            return d.value * 10 + "px"
-        })
-        .text(function (d) {
-            return d.key + ": " + d.value
-        })
-}
 
 function makeAjax(path, callback) {
     var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/' + path : path
     $.get(logpath, callback)
 }
 
-function addTab(name) {
-    var logpath = window.location.pathname.indexOf('honeypot') > -1 ? '/honeypot-1.0/log/' + name : '/log/' + name
-    var elm = $("<li role='presentation' class=''><a href='#" + name + "' aria-controls='" + name + "' role='tab' data-toggle='tab'>" + name + "</a></li>")
-    elm.click(function () {
-        $.get(logpath, function (logObj) {
-            var logs = logObj[name]
-            setDataForType(name, logs)
-            createMap(parseLogs(logs))
+function buildMetadata(prefix) {
+    $(".rank").each(function(key, $parent) {
+        var id = $parent.id
+        console.log($parent)
+        makeAjax(prefix + "/" + id, function(metadata) {
+            console.log(metadata)
+            var data = []
+            $.each(metadata, function (key, value) {
+                data.push({key: key, value: value})
+            })
+            data.sort(function (a, b) {
+                return a.value - b.value
+            })
+
+            data = data.slice(-20)
+            d3.select("#" + id  + " .chart").selectAll("div")
+                .data(data)
+                .enter()
+                .append("div")
+                .style("width", function (d) {
+                    return Math.log2(d.value) * 15 + "px"
+                })
+                .text(function (d) {
+                    return shorten(d.key) + ": " + d.value
+                })
         })
     })
-    if (name == "ALL") {
-        $.get(logpath, function (logObj) {
-            var logs = logObj[name]
-            setDataForType(name, logs)
-            createMap(parseLogs(logs))
+}
+function shorten(str) {
+    console.log(str)
+    console.log(str.length)
+    return str.length > 25 ? str.substring(0,25) + "..." : str
+}
+
+function buildHistory(prefix) {
+    $(".logTabs > li > a").click(function() {
+        var id = $(this)[0].innerHTML
+        var $logArea = $(".tab-content > #" + id)
+        var url = prefix + "/" + id
+        makeAjax(url, function(data) {
+            addLogTabData($logArea, data, url)
+            createMap(parseLogs(data))
         })
-    }
-    $(".logTabs").append(elm)
+    })
 }
 
-function setDataForType(type, logs) {
-
-    var elm = $(
-        "<div role='tabpanel' class='tab-pane' id='" + type + "'>" +
-        "<div class='log-area'>" +
-        "<ul class='log-list'>" +
-        "</ul>" +
-        "</div>" +
-        "</div>")
-
-    $('.tab-content').append(elm)
-
-    var parent = $("#" + type)
-    addLogTabData(parent, logs)
-}
-
-
-function addLogTabData(parent, logs) {
+function addLogTabData(parent, logs, url) {
     markers = []
     var loglist = parent.find('.log-list')
     loglist.empty()
     for (var i = logs.length - 1; i >= 0; i--) {
         var log = logs[i]
 
-        var attrs = []
-        $.each(log, function (key, value) {
-            attrs.push(key + ":\t" + value)
-        })
-
         var innerDiv = $('<div/>')
             .addClass('hidden')
             .addClass('log-info')
-            .html(attrs.join('<br>'))
+            .data("idx", log.idx)
 
         var newElm = $('<li/>')
             .addClass('log')
-            .text('(' + log['event-type'] + ') ' + log.address + '::' + log['remote-port'])
+            .text('(' + log['type'] + ') ' + log.addr + '::' + log['port'])
             .append(innerDiv)
 
         loglist.append(newElm)
     }
 
     parent.find('.log').click(function (event) {
-        $(this).find('div').toggleClass('hidden')
+        var $innerDiv = $(this).find('div')
+        if ($innerDiv.hasClass("hidden")) {
+            makeAjax(url + '?idx=' + $innerDiv.data("idx"), function(data) {
+                $innerDiv.html(dispJson(data))
+            })
+        }
+        $innerDiv.toggleClass('hidden')
     })
+}
+function dispJson(json) {
+    var attrs = []
+    $.each(json, function (key, value) {
+        attrs.push(key + ":\t" + value)
+    })
+    return attrs.join('<br>')
 }
 
 function parseLogs(logs) {
@@ -116,8 +107,8 @@ function parseLogs(logs) {
 
     for (var i = 0; i < logs.length; i++) {
         var log = logs[i];
-        var address = log.address;
-        var coords = [parseFloat(log.latitude), parseFloat(log.longitude)]
+        var address = log.addr;
+        var coords = [parseFloat(log.lat), parseFloat(log.lon)]
         if (!addressFrequencyMapping[address] && addressFrequencyMapping[address] != 0)
             addressFrequencyMapping[address] = 1
         else

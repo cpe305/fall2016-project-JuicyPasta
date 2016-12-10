@@ -27,7 +27,7 @@ public class SMTPService extends Service {
         String command[] = input.split(" ");
 
         switch (command[0]) {
-            case "HELO":
+            case "EHLO":
                 if (command.length > 1) {
                     super.getLog().addProperty("client host name", command[1]);
                     return "250 Hello " + command[1];

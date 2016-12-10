@@ -23,6 +23,7 @@ import java.util.Map;
  */
 
 // TODO: refactor this so that there is a list of LogType 'tags' and move all of the other attributes into properties
+// TODO: use some sort of JSON parser
 public class Log implements Serializable {
     private LogType type;
     private String description;
@@ -99,6 +100,7 @@ public class Log implements Serializable {
     public LogType getType() {
         return this.type;
     }
+
     public void setDescription(String desc) {
         this.description = desc;
     }
@@ -166,19 +168,6 @@ public class Log implements Serializable {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder toRet = new StringBuilder();
-        toRet.append("event description: ").append(description).append("\n");
-        toRet.append("start time: ").append(startTime).append("\n");
-        toRet.append("end time: ").append(endTime).append("\n");
-        toRet.append("address  ").append(address.getHostAddress()).append("\n");
-
-        properties.forEach((key, value) -> toRet.append(key + ": " + value + "\n"));
-
-        return toRet.toString();
-    }
-
     public JSONObject toJson() {
         JSONObject toRet = new JSONObject();
         toRet.put("event-type", type.type());
@@ -191,5 +180,15 @@ public class Log implements Serializable {
         toRet.put("conversation", conversation);
         properties.forEach((key, value) -> toRet.put(key, value));
         return toRet;
+    }
+
+    public JSONObject toSmallJson() {
+        JSONObject mapJson = new JSONObject();
+        mapJson.put("lon", this.properties.get("longitude"));
+        mapJson.put("lat", this.properties.get("latitude"));
+        mapJson.put("type", this.getType());
+        mapJson.put("addr", this.address.getHostAddress());
+        mapJson.put("port", remotePort);
+        return mapJson;
     }
 }
