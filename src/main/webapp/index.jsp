@@ -62,7 +62,7 @@
                 </div>
 
                 <script>
-                    $(".logTabs > .ALL").addClass("active")
+                    $(".logTabs > #ALL").addClass("active")
                     $(".tab-content > #ALL").addClass("active")
                 </script>
 
@@ -72,7 +72,7 @@
     </div>
     <div class="row">
         <%for (RankEnum type : RankEnum.values()) { %>
-            <div class="col-sm-3 rank" id="<%=type.name() %>">
+            <div class="col-md-3 col-sm-4 col-xs-6 rank" id="<%=type.name() %>">
                 <div class="card info">
                     <h4><%=type.getName()%></h4>
                     <div class="chart bordered"></div>

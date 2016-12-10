@@ -2,9 +2,10 @@ $(document).ready(function () {
     buildHistory('HISTORY');
 
     var $logArea = $(".tab-content > #ALL")
+    var $logList = $(".tab-content > #ALL > .log-area > .log-list")
     var url = "HISTORY/ALL"
     makeAjax(url, function(data) {
-        addLogTabData($logArea, data, url)
+        addLogTabData($logArea, $logList, data, url)
         createMap(parseLogs(data))
     })
 
@@ -20,18 +21,16 @@ function makeAjax(path, callback) {
 function buildMetadata(prefix) {
     $(".rank").each(function(key, $parent) {
         var id = $parent.id
-        console.log($parent)
         makeAjax(prefix + "/" + id, function(metadata) {
-            console.log(metadata)
             var data = []
             $.each(metadata, function (key, value) {
                 data.push({key: key, value: value})
             })
             data.sort(function (a, b) {
-                return a.value - b.value
+                return b.value - a.value
             })
 
-            data = data.slice(-20)
+            data = data.slice(0, 20)
             d3.select("#" + id  + " .chart").selectAll("div")
                 .data(data)
                 .enter()
@@ -46,27 +45,30 @@ function buildMetadata(prefix) {
     })
 }
 function shorten(str) {
-    console.log(str)
-    console.log(str.length)
     return str.length > 25 ? str.substring(0,25) + "..." : str
 }
 
 function buildHistory(prefix) {
     $(".logTabs > li > a").click(function() {
         var id = $(this)[0].innerHTML
+        var $toClose = $(".tab-content > .active")
+        $toClose.removeClass("active")
+
         var $logArea = $(".tab-content > #" + id)
+        $logArea.addClass("active")
+        var $logList = $(".tab-content > #" + id + " > .log-area > .log-list")
         var url = prefix + "/" + id
+        $logList.empty()
+        console.log(url)
         makeAjax(url, function(data) {
-            addLogTabData($logArea, data, url)
+            addLogTabData($logArea, $logList, data, url)
             createMap(parseLogs(data))
         })
     })
 }
 
-function addLogTabData(parent, logs, url) {
+function addLogTabData(parent, loglist, logs, url) {
     markers = []
-    var loglist = parent.find('.log-list')
-    loglist.empty()
     for (var i = logs.length - 1; i >= 0; i--) {
         var log = logs[i]
 

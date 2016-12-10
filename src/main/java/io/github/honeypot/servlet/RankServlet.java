@@ -18,7 +18,7 @@ import java.util.EnumMap;
  */
 public class RankServlet extends HttpServlet {
     public enum RankEnum{
-        COUNTRIES("Top Countries"), SSH_CREDS("SSH Credentials");
+        COUNTRIES("Top Countries"), SSH_CREDS("SSH Username");
 
         private String name;
         RankEnum(String name) {
@@ -43,7 +43,7 @@ public class RankServlet extends HttpServlet {
             countryConsumer.setAcceptAll();
             consumerMap.put(RankEnum.COUNTRIES, countryConsumer);
 
-            RankedAttributeConsumer sshConsumer = new RankedAttributeConsumer("credentials");
+            RankedAttributeConsumer sshConsumer = new RankedAttributeConsumer("username");
             sshConsumer.addAcceptableType(LogType.SSH_EVENT);
             consumerMap.put(RankEnum.SSH_CREDS, sshConsumer);
 
